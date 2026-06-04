@@ -25,7 +25,7 @@ public interface StockDetailRepository {
     // 학생의 가용 보유 포인트 조회
     int getStudentPoint(String studentId);
     // 학생의 특정 주식 보유수량 조회
-    int getStudentStockAmount(int stockNo, String studenId);
+    int getStudentStockAmount(int stockNo, String studentId);
     // 학생의 보유포인트 차감
     boolean setStudentPointDown(int totalPrice, String studentId);
     // 학생의 보유포인트 증가
