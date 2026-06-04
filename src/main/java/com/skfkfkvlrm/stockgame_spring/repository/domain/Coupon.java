@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Coupon extends Student {
+public class Coupon {
     @Id
-    @GeneratedValue(generator = "coupon_id", strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long couponId;
     private String name;
     private int price;
