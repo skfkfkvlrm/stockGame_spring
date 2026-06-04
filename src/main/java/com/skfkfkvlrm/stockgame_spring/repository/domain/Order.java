@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Order extends Student {
     @Id
-    @GeneratedValue(generator = "order_id", strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long orderId;
     private String content;
     private int price;
