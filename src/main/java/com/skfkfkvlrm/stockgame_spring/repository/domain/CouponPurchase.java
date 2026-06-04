@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 public class CouponPurchase extends Coupon {
     @Id
-    @GeneratedValue(generator = "purchase_id", strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long couponPurchaseId;
     private int price;
     private String name;
