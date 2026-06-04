@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String studentId;
     private String password;
     private String name;

@@ -1,23 +1,18 @@
 package com.skfkfkvlrm.stockgame_spring.repository.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-public class Coupon {
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int couponId;
-    private String name;
-    private int price;
+    private Long transactionId;
     @CreationTimestamp
     private LocalDateTime createdDate;
+    private Long sellOrderNo;
+    private Long buyOrderNo;
 }

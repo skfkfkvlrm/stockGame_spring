@@ -10,7 +10,7 @@ public interface StockListRepository {
     // 현재 기존 파일들을 최대한 그대로 사용가능하게 작성하는 중입니다
     // 따라서 StockDetailDAOMybatis.java에서 필요한 메서드를 재사용합니다
     // 1. 주식명 조회
-    public List<Stock> getStockNameList();
+    List<Stock> getStockNameList();
     // 2. 주식 현재가격 조회
     // 3. 주식 이전가격, 전장마감가 조회
     // 4. 주식 이전가 대비 조회
