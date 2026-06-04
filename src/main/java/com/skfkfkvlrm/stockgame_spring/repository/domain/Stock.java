@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Stock {
     @Id
-    @GeneratedValue(generator = "stock_id", strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long stockId;
     private String name;
     private String content;
