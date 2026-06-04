@@ -2,9 +2,11 @@ package com.skfkfkvlrm.stockgame_spring.repository;
 
 import com.skfkfkvlrm.stockgame_spring.repository.domain.Coupon;
 import com.skfkfkvlrm.stockgame_spring.repository.domain.CouponPurchase;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
+@Mapper
 public interface CouponRepository {
     // 등록된 쿠폰 모두 조회
     public List<Coupon> getCouponList();
