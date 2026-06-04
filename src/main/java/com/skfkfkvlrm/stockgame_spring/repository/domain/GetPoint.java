@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 public class GetPoint {
     @Id
-    @GeneratedValue(generator = "get_point_id", strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long getPointId;
     private String content;
     private int point;
