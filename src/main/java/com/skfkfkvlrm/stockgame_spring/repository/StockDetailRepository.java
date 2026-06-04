@@ -19,7 +19,7 @@ public interface StockDetailRepository {
     // 주식 이전 가격 대비 조회
     int getStockPriceChange(int stockNo);
     // 주식 등락률 조회
-    double getChangeRate(int StockNo);
+    double getChangeRate(int stockNo);
     // 주식 이전가격 조회
     int getPervPrice(int stockNo);
     // 학생의 가용 보유 포인트 조회
