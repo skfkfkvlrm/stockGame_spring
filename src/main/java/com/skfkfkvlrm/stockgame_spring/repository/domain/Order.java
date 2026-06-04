@@ -27,7 +27,6 @@ public class Order extends Student {
     private LocalDateTime createdDate;
     @UpdateTimestamp
     private LocalDateTime updatedDate;
-    @UpdateTimestamp
     private LocalDateTime deletedDate;
 
     @Override
