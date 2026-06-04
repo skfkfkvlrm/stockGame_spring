@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: stockGame_spring
+  security:
+    user:
+      name: admin
+      password: 1234
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+    check-template-location: true
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3306/mydb
+    username: mydbid
+    password: mydbpw
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  #        dialect: org.hibernate.dialect.MariaDBDialect
+
+server:
+  port: 8882
