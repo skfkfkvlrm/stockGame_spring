@@ -8,24 +8,24 @@ import java.util.List;
 
 @Mapper
 public interface MyAssetRepository {
-    //내 자산 조회
-    int getMyValue(int stockId, String studentId);
-    //
-    int getPointValue(String studentId);
-    //총 손익 조회
-    int getTotalProfit(int stockId, String studentId, OrderStatus state);
-    //보유 쿠폰 수량 조회
-    int getTotalCoupon(String studentId);
-    //보유 주식명 조회
+
+    Integer getMyValue(int stockId, String studentId);
+
+    Integer getPointValue(String studentId);
+
+    Integer getTotalProfit(int stockId, String studentId, OrderStatus state);
+
+    Integer getTotalCoupon(String studentId);
+
     String getStockName(int stockId);
-    //보유 주식 수량 조회
-    int getStockAmount(String studentId, int stockId, OrderStatus state);
-    //보유 주식 가격 조회
-    int getAveragePrice(String studentId, int stockId, OrderStatus state, String content);
 
-    int getPurchasePrice(String studentId, int stockId, OrderStatus state, String content);
+    Integer getStockAmount(String studentId, int stockId, OrderStatus state);
 
-    int getStockProfit(String studentId, int stockId, OrderStatus state);
+    Integer getAveragePrice(String studentId, int stockId, OrderStatus state, String content);
+
+    Integer getPurchasePrice(String studentId, int stockId, OrderStatus state, String content);
+
+    Integer getStockProfit(String studentId, int stockId, OrderStatus state);
 
     List<Integer> getMyStockNos(String studentId, OrderStatus state);
 }
