@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -16,21 +15,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Student {
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String studentId;
-    private String password;
-    private String name;
-    private int grade;
-    private String className;
-    private int classNumber;
-    private int registerYear;
-    private int totalCoupon;
-    private int totalPoint;
+    private int transactionId;
     @CreationTimestamp
     private LocalDateTime createdDate;
-    @UpdateTimestamp
-    private LocalDateTime updatedDate;
+    private int sellOrderNo;
+    private int buyOrderNo;
 }

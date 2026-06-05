@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class News {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long newsId;
+    private int newsId;
     private String content;
     @CreationTimestamp
     private LocalDateTime createdDate;

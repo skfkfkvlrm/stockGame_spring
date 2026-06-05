@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Order extends Student {
+public class Order {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long orderId;
+    private int orderId;
     private String content;
     private int price;
     private int amount;

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long couponId;
+    private int couponId;
     private String name;
     private int price;
     @CreationTimestamp

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class GetPoint {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long getPointId;
+    private int getPointId;
     private String content;
     private int point;
     @CreationTimestamp

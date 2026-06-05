@@ -1,5 +1,7 @@
 package com.skfkfkvlrm.stockgame_spring.repository.domain;
 
 public enum OrderStatus {
-    COMPLETED, PENDING, CANCELED
+    PENDING,    //대기
+    FILLED,     //체결
+    CANCELED    //취소
 }

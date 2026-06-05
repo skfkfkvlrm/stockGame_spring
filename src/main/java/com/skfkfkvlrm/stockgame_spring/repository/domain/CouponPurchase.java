@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class CouponPurchase extends Coupon {
+public class CouponPurchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long couponPurchaseId;
+    private int couponPurchaseId;
     private int price;
     private String name;
     private CouponPurchaseStatus state;
