@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class CouponPurchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long couponPurchaseId;
+    private int couponPurchaseId;
     private int price;
     private String name;
     private CouponPurchaseStatus state;

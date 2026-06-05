@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long orderId;
+    private int orderId;
     private String content;
     private int price;
     private int amount;

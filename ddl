@@ -1,6 +1,6 @@
 CREATE TABLE students(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    studentId VARCHAR(100) NOT NULL,
+    studentId VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     name VARCHAR(50) NOT NULL,
     grade INT NOT NULL,
@@ -82,6 +82,6 @@ CREATE TABLE transactions(
     createdDate DATETIME NOT NULL,
     sellOrderId INT,
     buyOrderId INT,
-    FOREIGN KEY (sellOrderId) REFERENCES stocks(stockId) ON DELETE CASCADE,
-    FOREIGN KEY (buyOrderId) REFERENCES stocks(stockId) ON DELETE CASCADE
+    FOREIGN KEY (sellOrderId) REFERENCES orders(orderId) ON DELETE CASCADE,
+    FOREIGN KEY (buyOrderId) REFERENCES orders(orderId) ON DELETE CASCADE
 );
