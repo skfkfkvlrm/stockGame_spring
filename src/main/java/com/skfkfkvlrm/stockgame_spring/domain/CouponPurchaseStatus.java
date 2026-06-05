@@ -1,4 +1,4 @@
-package com.skfkfkvlrm.stockgame_spring.repository.domain;
+package com.skfkfkvlrm.stockgame_spring.domain;
 
 public enum CouponPurchaseStatus {
     USED,       //사용완료

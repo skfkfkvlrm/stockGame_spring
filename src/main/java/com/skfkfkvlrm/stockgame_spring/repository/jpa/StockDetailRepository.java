@@ -1,9 +1,8 @@
-package com.skfkfkvlrm.stockgame_spring.repository;
+package com.skfkfkvlrm.stockgame_spring.repository.jpa;
 
-import com.skfkfkvlrm.stockgame_spring.repository.domain.Order;
-import com.skfkfkvlrm.stockgame_spring.repository.domain.OrderStatus;
+import com.skfkfkvlrm.stockgame_spring.domain.Order;
+import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;

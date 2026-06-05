@@ -1,7 +1,6 @@
-package com.skfkfkvlrm.stockgame_spring.repository;
+package com.skfkfkvlrm.stockgame_spring.repository.jpa;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;

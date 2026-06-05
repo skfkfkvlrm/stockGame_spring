@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace = "com.skfkfkvlrm.stockgame_spring.repository.MyAssetRepository">
+<mapper namespace = "com.skfkfkvlrm.stockgame_spring.repository.mybatis.MyAssetMapper">
 
 <select id = "getMyValue" parameterType ="map"  resultType="int">
 	 SELECT s.total_point + COALESCE(SUM(MY_VALUE.value), 0)
@@ -26,11 +26,11 @@
         GROUP BY s.total_point
 </select>
 
-<select id = "getPointValue" parameterType ="String"  resultType="int">
-	SELECT total_point
-        FROM students
-        WHERE student_id = #{studentId}
-</select>
+<!--<select id = "getPointValue" parameterType ="String"  resultType="int">-->
+<!--	SELECT total_point-->
+<!--        FROM students-->
+<!--        WHERE student_id = #{studentId}-->
+<!--</select>-->
 
 <select id = "getTotalProfit" parameterType ="map"  resultType="int">
 	SELECT COALESCE(SUM(stock_profit), 0) AS totalProfit
@@ -41,15 +41,12 @@
                     *
                     COALESCE(
                         (
-                            SELECT price
-                            FROM (
                                 SELECT price
                                 FROM orders
                                 WHERE stock_no = #{stockNo}
                                   AND state = '체결'
                                 ORDER BY order_date DESC
-                            )
-                            WHERE ROWNUM = 1
+                                LIMIT 1
                         ),
                         st.publication_price
                     )
@@ -64,11 +61,11 @@
         )
 </select>
 
-<select id = "getTotalCoupon" parameterType ="String"  resultType="int">
-	 SELECT total_coupon
-        FROM students
-        WHERE student_id = #{studentId}
-</select>
+<!--<select id = "getTotalCoupon" parameterType ="String"  resultType="int">-->
+<!--	 SELECT total_coupon-->
+<!--        FROM students-->
+<!--        WHERE student_id = #{studentId}-->
+<!--</select>-->
 
 <select id = "getStockName" parameterType ="int"  resultType="String">
 	SELECT name
@@ -111,15 +108,12 @@ SELECT COALESCE(SUM(price * amount), 0) AS purchasePrice
                     (
                         SELECT COALESCE(
                             (
-                                SELECT price
-                                FROM (
                                     SELECT price
                                     FROM orders
                                     WHERE stock_no = #{stockNo}
                                       AND state = '체결'
                                     ORDER BY order_date DESC
-                                )
-                                WHERE ROWNUM = 1
+                                    LIMIT 1
                             ),
                             st.publication_price
                         )

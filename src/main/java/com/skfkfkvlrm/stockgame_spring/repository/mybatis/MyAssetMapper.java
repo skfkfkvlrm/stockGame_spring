@@ -1,21 +1,16 @@
-package com.skfkfkvlrm.stockgame_spring.repository;
+package com.skfkfkvlrm.stockgame_spring.repository.mybatis;
 
-import com.skfkfkvlrm.stockgame_spring.repository.domain.OrderStatus;
+import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface MyAssetRepository {
+public interface MyAssetMapper {
 
     Integer getMyValue(int stockId, String studentId);
 
-    Integer getPointValue(String studentId);
-
     Integer getTotalProfit(int stockId, String studentId, OrderStatus state);
-
-    Integer getTotalCoupon(String studentId);
 
     String getStockName(int stockId);
 

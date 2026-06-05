@@ -1,4 +1,4 @@
-package com.skfkfkvlrm.stockgame_spring.repository.domain;
+package com.skfkfkvlrm.stockgame_spring.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Coupon {
+public class GetPoint {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int couponId;
-    private String name;
-    private int price;
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    private int getPointId;
+    private String content;
+    private int point;
     @CreationTimestamp
     private LocalDateTime createdDate;
 }

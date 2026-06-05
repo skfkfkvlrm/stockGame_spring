@@ -1,4 +1,4 @@
-package com.skfkfkvlrm.stockgame_spring.repository.domain;
+package com.skfkfkvlrm.stockgame_spring.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

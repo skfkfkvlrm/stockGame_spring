@@ -1,4 +1,4 @@
-package com.skfkfkvlrm.stockgame_spring.repository.domain;
+package com.skfkfkvlrm.stockgame_spring.domain;
 
 
 import jakarta.persistence.Entity;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Stock {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long stockId;
+    private int stockId;
     private String name;
     private String content;
     private int publicationBalance;

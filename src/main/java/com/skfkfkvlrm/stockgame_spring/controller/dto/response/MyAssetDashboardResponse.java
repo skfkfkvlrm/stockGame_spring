@@ -9,10 +9,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MyAssetDashboardResponse {
-    private String studentId;
+    private String studentName;
     private int totalAsset;
     private int totalPoint;
     private int totalProfit;
     private int totalCoupon;
-    private List<StockInfoResponse> stockList;
+    private List<StockInfoResponse> myStocks;
 }

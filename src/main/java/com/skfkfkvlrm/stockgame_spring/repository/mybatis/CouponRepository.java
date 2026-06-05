@@ -1,10 +1,9 @@
-package com.skfkfkvlrm.stockgame_spring.repository;
+package com.skfkfkvlrm.stockgame_spring.repository.mybatis;
 
-import com.skfkfkvlrm.stockgame_spring.repository.domain.Coupon;
-import com.skfkfkvlrm.stockgame_spring.repository.domain.CouponPurchase;
-import com.skfkfkvlrm.stockgame_spring.repository.domain.CouponPurchaseStatus;
+import com.skfkfkvlrm.stockgame_spring.domain.Coupon;
+import com.skfkfkvlrm.stockgame_spring.domain.CouponPurchase;
+import com.skfkfkvlrm.stockgame_spring.domain.CouponPurchaseStatus;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

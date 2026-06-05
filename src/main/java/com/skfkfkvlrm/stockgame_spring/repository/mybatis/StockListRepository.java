@@ -1,6 +1,6 @@
-package com.skfkfkvlrm.stockgame_spring.repository;
+package com.skfkfkvlrm.stockgame_spring.repository.mybatis;
 
-import com.skfkfkvlrm.stockgame_spring.repository.domain.Stock;
+import com.skfkfkvlrm.stockgame_spring.domain.Stock;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
