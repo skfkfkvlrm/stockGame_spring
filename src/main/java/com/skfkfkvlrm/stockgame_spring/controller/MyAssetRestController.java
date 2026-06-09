@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/asset")
+@RequestMapping("/api/asset")
 @RequiredArgsConstructor
 public class MyAssetRestController {
     private final MyAssetService myAssetService;

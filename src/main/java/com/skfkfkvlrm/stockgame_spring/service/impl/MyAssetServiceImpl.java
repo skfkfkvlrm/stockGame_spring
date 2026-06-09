@@ -5,6 +5,7 @@ import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockInfoResponse
 import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
 import com.skfkfkvlrm.stockgame_spring.repository.jpa.MyAssetRepository;
 import com.skfkfkvlrm.stockgame_spring.repository.mybatis.MyAssetMapper;
+import com.skfkfkvlrm.stockgame_spring.repository.mybatis.StockDetailMapper;
 import com.skfkfkvlrm.stockgame_spring.service.MyAssetService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,24 +18,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyAssetServiceImpl implements MyAssetService {
     private final MyAssetMapper myAssetMapper;
+    private final StockDetailMapper stockDetailMapper;
 
 
+
+    @Override
     @Transactional(readOnly = true)
     public DashboardResponse getDashboard(String studentId) {
         int totalPoint = myAssetMapper.getPointValue(studentId);
         int totalCoupon = myAssetMapper.getTotalCoupon(studentId);
+
         List<Integer> myStockNos = myAssetMapper.getMyStockNos(studentId, OrderStatus.FILLED);
+
         List<StockInfoResponse> stockList = new ArrayList<>();
         int totalStockValue = 0;
         int totalProfit = 0;
+
         for (int stockId : myStockNos) {
             int amount = myAssetMapper.getStockAmount(studentId, stockId, OrderStatus.FILLED);
+
             if (amount > 0) {
                 String stockName = myAssetMapper.getStockName(stockId);
-                int currentPrice = detail.getStockPrice(stockId);
+                int currentPrice = stockDetailMapper.getStockPrice(stockId);
                 int averagePrice = myAssetMapper.getAveragePrice(studentId, stockId, OrderStatus.FILLED, "매수");
                 int purchasePrice = myAssetMapper.getPurchasePrice(studentId, stockId, OrderStatus.FILLED, "매수");
                 int profit = myAssetMapper.getStockProfit(studentId, stockId, OrderStatus.FILLED);
+
                 totalStockValue += amount * currentPrice;
                 totalProfit += profit;
 
