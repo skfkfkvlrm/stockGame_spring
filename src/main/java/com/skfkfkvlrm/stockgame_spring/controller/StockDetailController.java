@@ -17,7 +17,7 @@ public class StockDetailController {
 
     // 주식 상세 페이지 진입
     @GetMapping("/{stockId}")
-    public String getStockDetail(int stockId, HttpSession session, Model model) {
+    public String getStockDetail(@PathVariable("stockId") int stockId, HttpSession session, Model model) {
         String studentId = (String) session.getAttribute("studentId");
         if (studentId == null) {
             return "redirect:/login";
