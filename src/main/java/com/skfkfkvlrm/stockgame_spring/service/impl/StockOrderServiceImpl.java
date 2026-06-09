@@ -34,6 +34,10 @@ public class StockOrderServiceImpl implements StockOrderService {
         }
         // 4. [부분 체결 대비]
         // 매수 취소 시 포인트를 상대 학생에세 환불
+        if ("매수".equals(order.getContent())) {
+            int refundAmount = order.getPrice() * order.getAmount();
+            stockDetailMapper.setStudentPointUp(refundAmount, studentId);
+        }
         // 5. 데이터베이스 주문 상태를 '취소'로 업데이트
         stockDetailMapper.setOrderStateCancel(orderId);
         // 6. 주식 번호 리턴
