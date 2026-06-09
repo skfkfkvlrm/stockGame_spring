@@ -32,6 +32,7 @@ public class StockDetailRestController {
     }
 
     // 내 요청 주문 목록 조회
+    @GetMapping("/waiting-orders")
     public ResponseEntity<List<Order>> getWaitingList(@RequestParam int stockId, HttpSession session) {
         String studentId = (String) session.getAttribute("studentId");
         if (studentId == null) {
