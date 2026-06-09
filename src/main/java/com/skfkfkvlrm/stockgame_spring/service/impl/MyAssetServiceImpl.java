@@ -6,7 +6,7 @@ import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
 import com.skfkfkvlrm.stockgame_spring.repository.jpa.MyAssetRepository;
 import com.skfkfkvlrm.stockgame_spring.repository.mybatis.MyAssetMapper;
 import com.skfkfkvlrm.stockgame_spring.service.MyAssetService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class MyAssetServiceImpl implements MyAssetService {
     private final MyAssetMapper myAssetMapper;
 
 
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional(readOnly = true)
     public DashboardResponse getDashboard(String studentId) {
         int totalPoint = myAssetMapper.getPointValue(studentId);
         int totalCoupon = myAssetMapper.getTotalCoupon(studentId);
