@@ -29,6 +29,6 @@ public class StockOrderController {
         } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("Message", e.getMessage());
         }
-        return "redirect:/controller?cmd=StockDetail&stockId={stockId}";
+        return "redirect:/stock/" + stockId;
     }
 }
