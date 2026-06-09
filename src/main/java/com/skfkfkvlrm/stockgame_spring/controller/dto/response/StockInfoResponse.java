@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StockInfoResponse {
-    private String name;
+    private String stockName;
     private int amount;
-    private int publicationPrice;
-    private int profit;
+    private int currentPrice;
+    private int averagePrice;
+    private int purchasePrice;
+    private long totalPurchasePrice;
+    private long profit;
 }
