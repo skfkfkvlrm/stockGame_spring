@@ -43,7 +43,7 @@
                         (
                                 SELECT price
                                 FROM orders
-                                WHERE stock_no = #{stockNo}
+                                WHERE stock_no = #{stockId}
                                   AND state = '체결'
                                 ORDER BY order_date DESC
                                 LIMIT 1
