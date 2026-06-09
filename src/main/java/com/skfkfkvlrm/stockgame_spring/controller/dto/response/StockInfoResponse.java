@@ -14,6 +14,7 @@ public class StockInfoResponse {
     private int amount;
     private int currentPrice;
     private int averagePrice;
+    private int purchasePrice;
     private long totalPurchasePrice;
     private long profit;
 }

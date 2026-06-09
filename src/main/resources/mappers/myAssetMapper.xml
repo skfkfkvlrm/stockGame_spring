@@ -26,11 +26,11 @@
         GROUP BY s.total_point
 </select>
 
-<!--<select id = "getPointValue" parameterType ="String"  resultType="int">-->
-<!--	SELECT total_point-->
-<!--        FROM students-->
-<!--        WHERE student_id = #{studentId}-->
-<!--</select>-->
+<select id = "getPointValue" parameterType ="String"  resultType="int">
+	SELECT total_point
+        FROM students
+        WHERE student_id = #{studentId}
+</select>
 
 <select id = "getTotalProfit" parameterType ="map"  resultType="int">
 	SELECT COALESCE(SUM(stock_profit), 0) AS totalProfit
@@ -61,11 +61,11 @@
         )
 </select>
 
-<!--<select id = "getTotalCoupon" parameterType ="String"  resultType="int">-->
-<!--	 SELECT total_coupon-->
-<!--        FROM students-->
-<!--        WHERE student_id = #{studentId}-->
-<!--</select>-->
+<select id = "getTotalCoupon" parameterType ="String"  resultType="int">
+	 SELECT total_coupon
+        FROM students
+        WHERE student_id = #{studentId}
+</select>
 
 <select id = "getStockName" parameterType ="int"  resultType="String">
 	SELECT name

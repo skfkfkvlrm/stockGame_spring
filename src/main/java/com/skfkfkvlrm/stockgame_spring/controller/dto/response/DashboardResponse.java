@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyAssetDashboardResponse {
+public class DashboardResponse {
     private String studentName;
     private int totalAsset;
     private int totalPoint;

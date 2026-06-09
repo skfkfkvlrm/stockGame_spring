@@ -10,7 +10,11 @@ public interface MyAssetMapper {
 
     Integer getMyValue(int stockId, String studentId);
 
+    Integer getPointValue(String studentId);
+
     Integer getTotalProfit(int stockId, String studentId, OrderStatus state);
+
+    Integer getTotalCoupon(String studentId);
 
     String getStockName(int stockId);
 
