@@ -2,7 +2,7 @@ package com.skfkfkvlrm.stockgame_spring.service.impl;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockDetailResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.Order;
-import com.skfkfkvlrm.stockgame_spring.repository.mybatis.StockDetailMapper;
+import com.skfkfkvlrm.stockgame_spring.repository.StockDetailMapper;
 import com.skfkfkvlrm.stockgame_spring.service.StockDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

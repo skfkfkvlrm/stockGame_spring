@@ -1,4 +1,4 @@
-package com.skfkfkvlrm.stockgame_spring.repository.mybatis;
+package com.skfkfkvlrm.stockgame_spring.repository;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockOrderResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.Order;
