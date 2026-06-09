@@ -1,5 +1,6 @@
-package com.skfkfkvlrm.stockgame_spring.repository.mybatis;
+package com.skfkfkvlrm.stockgame_spring.repository;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockOrderResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.Order;
 import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
 import org.apache.ibatis.annotations.Mapper;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface StockDetailRepository {
+public interface StockDetailMapper {
     // 매도 주문요청
     String setSellOrder(String studentId, int sellPrice, int sellAmount, int stockId);
 
@@ -80,4 +81,7 @@ public interface StockDetailRepository {
 
     // 매수 주문 요청 매칭
     Map<String, Object> getMatchOrder(int stockId, int orderPrice, int orderAmount, String studentId, String content);
+
+    //편의성 메서드 추가
+    StockOrderResponse getOrderById(int orderId);
 }

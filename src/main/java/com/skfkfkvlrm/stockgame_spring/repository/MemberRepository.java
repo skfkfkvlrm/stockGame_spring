@@ -1,4 +1,4 @@
-package com.skfkfkvlrm.stockgame_spring.repository.mybatis;
+package com.skfkfkvlrm.stockgame_spring.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 
