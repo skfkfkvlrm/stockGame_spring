@@ -16,8 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MyAssetServiceImpl implements MyAssetService {
-    public final MyAssetMapper myAssetMapper;
-    public final MyAssetRepository myAssetRepository;
+    private final MyAssetMapper myAssetMapper;
 
 
     @Transactional(rollbackOn = Exception.class)
