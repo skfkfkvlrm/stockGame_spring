@@ -60,8 +60,7 @@ public class StockPriceServiceImpl implements StockPriceService {
         return stockPriceList;
     }
 
-    @Override
-    public int getIntOrDefault(Map<String, Object> map, String key) {
+    private int getIntOrDefault(Map<String, Object> map, String key) {
         if (map == null || map.get(key) == null) {
             return 0;
         }
