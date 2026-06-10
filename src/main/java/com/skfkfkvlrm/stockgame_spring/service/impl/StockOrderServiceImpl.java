@@ -1,5 +1,6 @@
 package com.skfkfkvlrm.stockgame_spring.service.impl;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.request.StockOrderRequest;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockOrderResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
 import com.skfkfkvlrm.stockgame_spring.repository.StockDetailRepository;
@@ -12,6 +13,26 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StockOrderServiceImpl implements StockOrderService {
     private final StockDetailRepository stockDetailRepository;
+
+    @Override
+    @Transactional
+    public String buyStock(String studentId, StockOrderRequest request) {
+        int totalOrderPrice = request.getPrice() * request.getAmount();
+        // 1. 보유 포인트 확인
+        // 2. 주문 내역 등록
+        // 3. 포인트 차감
+        // 4. 거래 내역 등록
+    }
+
+    @Override
+    @Transactional
+    public String sellStock(String studentId, StockOrderRequest request) {
+        int totalOrderPrice = request.getPrice() * request.getAmount();
+        // 1. 보유 주식 수량 검증
+        // 2. 주문 내역 등록
+        // 3. 포인트 증가
+        // 4. 거래 내역 등록
+    }
 
     @Override
     @Transactional
