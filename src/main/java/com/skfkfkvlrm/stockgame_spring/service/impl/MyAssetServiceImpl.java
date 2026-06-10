@@ -3,8 +3,8 @@ package com.skfkfkvlrm.stockgame_spring.service.impl;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.DashboardResponse;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockInfoResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
-import com.skfkfkvlrm.stockgame_spring.repository.MyAssetMapper;
-import com.skfkfkvlrm.stockgame_spring.repository.StockDetailMapper;
+import com.skfkfkvlrm.stockgame_spring.repository.MyAssetRepository;
+import com.skfkfkvlrm.stockgame_spring.repository.StockDetailRepository;
 import com.skfkfkvlrm.stockgame_spring.service.MyAssetService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,32 +16,32 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MyAssetServiceImpl implements MyAssetService {
-    private final MyAssetMapper myAssetMapper;
-    private final StockDetailMapper stockDetailMapper;
+    private final MyAssetRepository myAssetRepository;
+    private final StockDetailRepository stockDetailRepository;
 
 
 
     @Override
     @Transactional(readOnly = true)
     public DashboardResponse getDashboard(String studentId) {
-        int totalPoint = myAssetMapper.getPointValue(studentId);
-        int totalCoupon = myAssetMapper.getTotalCoupon(studentId);
+        int totalPoint = myAssetRepository.getPointValue(studentId);
+        int totalCoupon = myAssetRepository.getTotalCoupon(studentId);
 
-        List<Integer> myStockNos = myAssetMapper.getMyStockNos(studentId, OrderStatus.FILLED);
+        List<Integer> myStockNos = myAssetRepository.getMyStockNos(studentId, OrderStatus.FILLED);
 
         List<StockInfoResponse> stockList = new ArrayList<>();
         int totalStockValue = 0;
         int totalProfit = 0;
 
         for (int stockId : myStockNos) {
-            int amount = myAssetMapper.getStockAmount(studentId, stockId, OrderStatus.FILLED);
+            int amount = myAssetRepository.getStockAmount(studentId, stockId, OrderStatus.FILLED);
 
             if (amount > 0) {
-                String stockName = myAssetMapper.getStockName(stockId);
-                int currentPrice = stockDetailMapper.getStockPrice(stockId);
-                int averagePrice = myAssetMapper.getAveragePrice(studentId, stockId, OrderStatus.FILLED, "매수");
-                int purchasePrice = myAssetMapper.getPurchasePrice(studentId, stockId, OrderStatus.FILLED, "매수");
-                int profit = myAssetMapper.getStockProfit(studentId, stockId, OrderStatus.FILLED);
+                String stockName = myAssetRepository.getStockName(stockId);
+                int currentPrice = stockDetailRepository.getStockPrice(stockId);
+                int averagePrice = myAssetRepository.getAveragePrice(studentId, stockId, OrderStatus.FILLED, "매수");
+                int purchasePrice = myAssetRepository.getPurchasePrice(studentId, stockId, OrderStatus.FILLED, "매수");
+                int profit = myAssetRepository.getStockProfit(studentId, stockId, OrderStatus.FILLED);
 
                 totalStockValue += amount * currentPrice;
                 totalProfit += profit;

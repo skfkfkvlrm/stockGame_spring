@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper
-public interface StockDetailMapper {
+public interface StockDetailRepository {
     // 매도 주문요청
     String setSellOrder(String studentId, int sellPrice, int sellAmount, int stockId);
 

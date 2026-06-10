@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="stockDetailMapper">
+<mapper namespace="stockDetailRepository">
 	<select id="getStockInfo" parameterType="int" resultType="map">
-		SELECT name AS "name", content AS "content" FROM stocks WHERE stock_no = #{stockNo}
+		SELECT name AS "name", content AS "content" FROM stocks WHERE stockId = #{stockNo}
 	</select>
 	<select id="getStockPrice" parameterType="int" resultType="int">
 		SELECT price FROM (SELECT o.price FROM TRANSACTION t 
-		JOIN ORDERS o ON t.buy_order_no = o.order_no WHERE o.stock_no = #{stockNo} 
+		JOIN ORDERS o ON t.buy_order_no = o.orderId WHERE o.stockId = #{stockNo}
 		ORDER BY t.TRANSACTION_DATE DESC)WHERE ROWNUM = 1
 	</select>
 	<select id="getStockPriceChange" parameterType="int" resultType="int">

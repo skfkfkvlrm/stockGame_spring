@@ -2,7 +2,7 @@ package com.skfkfkvlrm.stockgame_spring.service.impl;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockDetailResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.Order;
-import com.skfkfkvlrm.stockgame_spring.repository.StockDetailMapper;
+import com.skfkfkvlrm.stockgame_spring.repository.StockDetailRepository;
 import com.skfkfkvlrm.stockgame_spring.service.StockDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,26 +16,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StockDetailServiceImpl implements StockDetailService {
-    private final StockDetailMapper stockDetailMapper;
+    private final StockDetailRepository stockDetailRepository;
 
     // 1. 주식 기본 정보 조회
     @Override
     public StockDetailResponse getStockDetailInfo(int stockId) {
-        Map<String, Object> stockInfo = stockDetailMapper.getStockInfo(stockId);
+        Map<String, Object> stockInfo = stockDetailRepository.getStockInfo(stockId);
         if (stockInfo == null) {
             throw new IllegalArgumentException("존재하지 않는 주식입니다. 주식 번호: " + stockId);
         }
 
         // 2. 주식 발행 정보 조회
-        Map<String, Object> stockPubInfo = stockDetailMapper.getStockPubInfo(stockId);
+        Map<String, Object> stockPubInfo = stockDetailRepository.getStockPubInfo(stockId);
 
         int pubPrice = getIntOrDefault(stockPubInfo, "pubPrice");
         int pubAmount = getIntOrDefault(stockPubInfo, "pubAmount");
         // 3. 현재 시장 가격 조회
-        int nowPrice = stockDetailMapper.getStockPrice(stockId);
+        int nowPrice = stockDetailRepository.getStockPrice(stockId);
         nowPrice = nowPrice == 0 ? pubPrice : nowPrice;
         // 4. 이전 장 가격 조회
-        int prevPrice = stockDetailMapper.getPervPrice(stockId);
+        int prevPrice = stockDetailRepository.getPervPrice(stockId);
 
         // 5. response 빌드 후 반환
         return StockDetailResponse.builder()
@@ -59,17 +59,17 @@ public class StockDetailServiceImpl implements StockDetailService {
     @Override
     public List<Order> getLiveOrderList(int stockId, String type) {
         if ("매수".equalsIgnoreCase(type)) {
-            List<Order> sellOrders = stockDetailMapper.getTotalSellOrder(stockId);
+            List<Order> sellOrders = stockDetailRepository.getTotalSellOrder(stockId);
             return sellOrders != null ? sellOrders : Collections.emptyList();
         } else {
-            List<Order> buyOrders = stockDetailMapper.getTotalBuyOrder(stockId);
+            List<Order> buyOrders = stockDetailRepository.getTotalBuyOrder(stockId);
             return buyOrders != null ? buyOrders : Collections.emptyList();
         }
     }
 
     @Override
     public List<Order> getwaitingOrderList(int stockId, String studentId) {
-        List<Order> myOrders = stockDetailMapper.getTotalMyOrder(stockId, studentId);
+        List<Order> myOrders = stockDetailRepository.getTotalMyOrder(stockId, studentId);
         return myOrders != null ? myOrders : Collections.emptyList();
     }
 }

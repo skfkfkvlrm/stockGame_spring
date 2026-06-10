@@ -2,7 +2,7 @@ package com.skfkfkvlrm.stockgame_spring.service.impl;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockOrderResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
-import com.skfkfkvlrm.stockgame_spring.repository.StockDetailMapper;
+import com.skfkfkvlrm.stockgame_spring.repository.StockDetailRepository;
 import com.skfkfkvlrm.stockgame_spring.service.StockOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class StockOrderServiceImpl implements StockOrderService {
-    private final StockDetailMapper stockDetailMapper;
+    private final StockDetailRepository stockDetailRepository;
 
     @Override
     @Transactional
     public int cancelOrder(int orderId, String studentId) {
         // 1. 취소할 주문 정보 상세 조회
-        StockOrderResponse order = stockDetailMapper.getOrderById(orderId);
+        StockOrderResponse order = stockDetailRepository.getOrderById(orderId);
         if (order == null){
             throw new IllegalArgumentException("존재하지 않는 주문입니다. 주문 번호: " + orderId);
         }
@@ -36,10 +36,10 @@ public class StockOrderServiceImpl implements StockOrderService {
         // 매수 취소 시 포인트를 상대 학생에세 환불
         if ("매수".equals(order.getContent())) {
             int refundAmount = order.getPrice() * order.getAmount();
-            stockDetailMapper.setStudentPointUp(refundAmount, studentId);
+            stockDetailRepository.setStudentPointUp(refundAmount, studentId);
         }
         // 5. 데이터베이스 주문 상태를 '취소'로 업데이트
-        stockDetailMapper.setOrderStateCancel(orderId);
+        stockDetailRepository.setOrderStateCancel(orderId);
         // 6. 주식 번호 리턴
         return order.getOrderId();
     }
