@@ -16,8 +16,7 @@ public class MyPointHistoryController {
     private final MyPointHistoryService myPointHistoryService;
 
     @GetMapping("/history")
-    public String getMyPointHistory(HttpSession session, Model model) {
-        String studentId = (String) session.getAttribute("studentId");
+    public String getMyPointHistory(@SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
         if (studentId == null) {
             return "redirect:/login";
         }
