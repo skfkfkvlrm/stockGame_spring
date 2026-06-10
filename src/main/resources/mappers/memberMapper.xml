@@ -15,7 +15,7 @@
 	
 	<!-- 아이디 중복체크 -->
 	<select id="getIdCheck" parameterType="String" resultType="String">
-		SELECT student_id FROM students WHERE student_id = #{studentId} 
+		SELECT COUNT(student_id) FROM students WHERE student_id = #{studentId}
 	</select>
 	
 </mapper>

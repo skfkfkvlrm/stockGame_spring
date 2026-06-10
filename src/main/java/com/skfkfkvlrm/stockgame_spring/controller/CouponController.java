@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -19,23 +20,21 @@ public class CouponController {
     @GetMapping("/")
     public String getCouponList(Model model) {
         model.addAttribute("couponList", couponService.getCouponList());
-        return "view/CouponMarket";
+        return "CouponMarket";
     }
 
     @GetMapping("/my-coupons")
-    public String getMyCouponList(HttpSession session, Model model) {
-        String studentId = (String) session.getAttribute("studentId");
+    public String getMyCouponList(@SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
         if (studentId == null) {
             return "redirect:/login";
         } else {
             model.addAttribute("couponList", couponService.getMyCouponList(studentId));
-            return "view/CouponPersonal";
+            return "CouponPersonal";
         }
     }
 
     @PostMapping("/buy")
-    public String buyCoupon(int couponId, int couponPrice, String couponName, HttpSession session, RedirectAttributes redirectAttributes) {
-        String studentId = (String) session.getAttribute("studentId");
+    public String buyCoupon(int couponId, int couponPrice, String couponName, @SessionAttribute(name = "studentId", required = false) String studentId, RedirectAttributes redirectAttributes) {
         if (studentId == null) {
             return "redirect:/login";
         }

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Controller
 @RequestMapping("/stock")
@@ -18,8 +19,7 @@ public class StockDetailController {
 
     // 주식 상세 페이지 진입
     @GetMapping("/{stockId}")
-    public String getStockDetail(@PathVariable("stockId") int stockId, HttpSession session, Model model) {
-        String studentId = (String) session.getAttribute("studentId");
+    public String getStockDetail(@PathVariable("stockId") int stockId, @SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
         if (studentId == null) {
             return "redirect:/login";
         }
