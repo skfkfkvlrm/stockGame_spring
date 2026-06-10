@@ -23,6 +23,6 @@ public class MyPointHistoryController {
         }
         List<Map<String, Object>> historyList = myPointHistoryService.getMyPointHistoryList(studentId);
         model.addAttribute("historyList", historyList);
-        return "view/MyPointHistory";
+        return "MyPointHistory";
     }
 }
