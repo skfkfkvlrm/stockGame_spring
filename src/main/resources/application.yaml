@@ -27,5 +27,10 @@ spring:
         format_sql: true
   mybatis:
     mapper-locations: classpath:mappers/*.xml
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .html
+  web:
 server:
   port: 8882
