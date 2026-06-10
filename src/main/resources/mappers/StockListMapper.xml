@@ -2,6 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="stockListRepository">
 	<select id="getStockNameList" resultType="com.school.stockGame.vo.StockVO">
-		SELECT stock_no AS "stockNo", name AS "name" FROM stocks ORDER BY stock_no
+		SELECT stock_id, name FROM stocks ORDER BY stock_id
 	</select>
 </mapper>

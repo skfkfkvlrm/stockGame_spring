@@ -11,15 +11,15 @@
                     * COALESCE(
                         (SELECT price
                         FROM orders
-                        WHERE stock_no = #{stockNo}
+                        WHERE stock_id = #{stockId}
                             AND state = '체결'
-                        ORDER BY order_date DESC
+                        ORDER BY created_date DESC
                         LIMIT 1), st.publication_price
                     ) AS value
             FROM orders o
-            JOIN stocks st ON o.stock_no = st.stock_no
+            JOIN stocks st ON o.stock_id = st.stock_id
             WHERE o.state = '체결'
-            GROUP BY o.student_id, o.stock_no, st.publication_price
+            GROUP BY o.student_id, o.stock_id, st.publication_price
         ) MY_VALUE
         ON s.student_id = MY_VALUE.student_id
         WHERE s.student_id = #{studentId}
@@ -43,9 +43,9 @@
                         (
                                 SELECT price
                                 FROM orders
-                                WHERE stock_no = #{stockId}
+                                WHERE stock_id = #{stockId}
                                   AND state = '체결'
-                                ORDER BY order_date DESC
+                                ORDER BY created_date DESC
                                 LIMIT 1
                         ),
                         st.publication_price
@@ -54,11 +54,11 @@
                 -
                 SUM(CASE WHEN o.content = '매수' THEN o.price * o.amount ELSE 0 END) AS stock_profit
             FROM orders o
-            JOIN stocks st ON o.stock_no = st.stock_no
+            JOIN stocks st ON o.stock_id = st.stock_id
             WHERE o.student_id = #{studentId}
               AND o.state = #{state}
-            GROUP BY o.stock_no, st.publication_price
-        )
+            GROUP BY o.stock_id, st.publication_price
+        ) profit
 </select>
 
 <select id = "getTotalCoupon" parameterType ="String"  resultType="int">
@@ -70,14 +70,14 @@
 <select id = "getStockName" parameterType ="int"  resultType="String">
 	SELECT name
         FROM stocks
-        WHERE stock_no = #{studentId}
+        WHERE stock_id = #{stockId}
 </select>
 
 <select id = "getStockAmount" parameterType ="map"  resultType="int">
 	SELECT COALESCE(SUM(CASE WHEN content = '매수' THEN amount ELSE -amount END), 0) AS amount
         FROM orders
         WHERE student_id = #{studentId}
-          AND stock_no = #{stockNo}
+          AND stock_id = #{stockId}
           AND state = #{state}
 </select>
 
@@ -85,7 +85,7 @@
 	SELECT COALESCE((SUM(price * amount) / SUM(amount)), 0) AS average
         FROM orders
         WHERE student_id = #{studentId}
-          AND stock_no = #{stockNo}
+          AND stock_id = #{stockId}
           AND state = #{state}
           AND content = #{content}
 </select>
@@ -94,7 +94,7 @@
 SELECT COALESCE(SUM(price * amount), 0) AS purchasePrice
         FROM orders
         WHERE student_id = #{studentId}
-          AND stock_no = #{stockNo}
+          AND stock_id = #{stockId}
           AND state = #{state}
           AND content = #{content}
 </select>
@@ -110,15 +110,15 @@ SELECT COALESCE(SUM(price * amount), 0) AS purchasePrice
                             (
                                     SELECT price
                                     FROM orders
-                                    WHERE stock_no = #{stockId}
+                                    WHERE stock_id = #{stockId}
                                       AND state = '체결'
-                                    ORDER BY order_date DESC
+                                    ORDER BY created_date DESC
                                     LIMIT 1
                             ),
                             st.publication_price
                         )
                         FROM stocks st
-                        WHERE st.stock_no = o.stock_no
+                        WHERE st.stock_id = o.stock_id
                     )
                 )
                 -
@@ -128,13 +128,13 @@ SELECT COALESCE(SUM(price * amount), 0) AS purchasePrice
         ) AS profit
         FROM orders o
         WHERE o.student_id = #{studentId}
-          AND o.stock_no = #{stockNo}
+          AND o.stock_id = #{stockId}
           AND o.state = #{state}
-        GROUP BY stock_no
+        GROUP BY stock_id
 </select>
 
 <select id = "getMyStockNos" parameterType ="map"  resultType="int">
-	SELECT DISTINCT stock_no
+	SELECT DISTINCT stock_id
         FROM orders
         WHERE student_id = #{studentId}
           AND state = #{state}

@@ -4,7 +4,7 @@
 
 	<!-- 만들어져있는 쿠폰 모두 조회 -->
 	<select id="getCouponList" resultType="com.school.stockGame.vo.CouponVO">
-		SELECT coupon_no, name, price FROM coupons
+		SELECT coupon_id, name, price FROM coupons
 	</select>
 	
 	<!-- 나의 가용포인트 조회 -->
@@ -14,8 +14,8 @@
 	
 	<!-- 쿠폰 구매 (쿠폰구매내역 추가) -->
 	<insert id="setPurchaseRecord" parameterType="com.school.stockGame.vo.CouponPurchaseVO">
-		INSERT INTO coupon_purchase (coupon_purchase_no, purchase_date, price, name, state, student_id, coupon_no) 
-		VALUES(coupon_purchase_no_seq.NEXTVAL, sysdate, #{price}, #{name}, #{state}, #{studentId}, #{couponNo})
+		INSERT INTO coupon_purchase (price, name, state, created_date, student_id, coupon_id)
+		VALUES(#{price}, #{name}, #{state}, NOW(), #{studentId}, #{couponId})
 	</insert>
 	
 	<!-- 쿠폰 구매시 학생의 가용포인트 차감 및 보유쿠폰 개수 업데이트(가용포인트 부족시 구매 불가) -->
@@ -28,12 +28,12 @@
 	<select id="getMyCouponList" parameterType="String" resultType="com.school.stockGame.vo.CouponPurchaseVO">
 		SELECT c.name, cp.price 
 		FROM coupon_purchase cp 
-		INNER JOIN coupons c ON cp.coupon_no = c.coupon_no 
-		WHERE student_id= #{studentId}
+		INNER JOIN coupons c ON cp.coupon_id = c.coupon_id
+		WHERE cp.student_id= #{studentId}
 	</select>
 	
 	<!-- 내가 구매한 쿠폰 수량 -->
 	<select id="getMyCouponCount" parameterType="String" resultType="int">
-		SELECT COUNT(*) FROM COUPON_PURCHASE WHERE student_id = #{studentId}
+		SELECT COUNT(*) FROM coupon_purchase WHERE student_id = #{studentId}
 	</select>
 </mapper>
