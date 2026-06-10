@@ -19,7 +19,7 @@ public class CouponController {
     @GetMapping("/")
     public String getCouponList(Model model) {
         model.addAttribute("couponList", couponService.getCouponList());
-        return "templates/view/CouponMarket";
+        return "view/CouponMarket";
     }
 
     @GetMapping("/my-coupons")
@@ -29,7 +29,7 @@ public class CouponController {
             return "redirect:/login";
         } else {
             model.addAttribute("couponList", couponService.getMyCouponList(studentId));
-            return "templates/view/CouponPersonal";
+            return "view/CouponPersonal";
         }
     }
 

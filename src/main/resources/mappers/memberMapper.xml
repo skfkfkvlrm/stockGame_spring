@@ -4,8 +4,8 @@
 
 	<!-- 회원가입 -->
 	<insert id="setMember" parameterType="com.school.stockGame.vo.StudentVO">
-		INSERT INTO students (student_id, password, name, grade, class_name, register_year, total_coupon, total_point, created_date)
-		VALUES (#{studentId}, #{password}, #{name}, #{grade}, #{className}, YEAR(NOW()), 0, 30000, NOW())
+		INSERT INTO students (student_id, password, name, grade, class_name, class_number, register_year, total_coupon, total_point, created_date)
+		VALUES (#{studentId}, #{password}, #{name}, #{grade}, #{className}, #{classNumber}, YEAR(NOW()), 0, 30000, NOW())
 	</insert>
 	
 	<!-- 로그인 -->

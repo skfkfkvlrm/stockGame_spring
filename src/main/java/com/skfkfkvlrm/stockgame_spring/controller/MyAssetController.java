@@ -24,6 +24,6 @@ public class MyAssetController {
         DashboardResponse response = myAssetService.getDashboard(studentId);
         model.addAttribute("dashboard", response);
 
-        return "templates/view/MyAssets";
+        return "view/MyAssets";
     }
 }
