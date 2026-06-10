@@ -2,8 +2,8 @@ package com.skfkfkvlrm.stockgame_spring.service.impl;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockPriceResponse;
 import com.skfkfkvlrm.stockgame_spring.domain.Stock;
-import com.skfkfkvlrm.stockgame_spring.repository.StockDetailMapper;
-import com.skfkfkvlrm.stockgame_spring.repository.StockListMapper;
+import com.skfkfkvlrm.stockgame_spring.repository.StockDetailRepository;
+import com.skfkfkvlrm.stockgame_spring.repository.StockListRepository;
 import com.skfkfkvlrm.stockgame_spring.service.StockPriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,13 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class StockPriceServiceImpl implements StockPriceService {
-    private final StockDetailMapper stockDetailMapper;
-    private final StockListMapper stockListMapper;
+    private final StockDetailRepository stockDetailRepository;
+    private final StockListRepository stockListRepository;
 
     @Override
     public List<StockPriceResponse> getStockPriceList() {
         // 1. 전체 주식 종목 리스트 조회
-        List<Stock> stockList = stockListMapper.getStockNameList();
+        List<Stock> stockList = stockListRepository.getStockNameList();
         List<StockPriceResponse> stockPriceList = new ArrayList<>();
 
         for (Stock stock : stockList) {
@@ -29,15 +29,15 @@ public class StockPriceServiceImpl implements StockPriceService {
             String stockName = stock.getName();
 
             // 2. 해당 종목의 발행 정보(잔여 수량, 발행가)
-            Map<String, Object> pubInfo = stockDetailMapper.getStockPubInfo(stockId);
+            Map<String, Object> pubInfo = stockDetailRepository.getStockPubInfo(stockId);
             int pubAmount = getIntOrDefault(pubInfo, "pubAmount");
             int pubPrice = getIntOrDefault(pubInfo, "pubPrice");
 
             // 3. 발행 잔량이 남아있으면 현재가를 초기 발행가로 고정
-            int currentPrice = pubAmount > 0 ? pubPrice : stockDetailMapper.getStockPrice(stockId);
+            int currentPrice = pubAmount > 0 ? pubPrice : stockDetailRepository.getStockPrice(stockId);
 
             // 4. 이전 가격 조회
-            int prevPrice = stockDetailMapper.getPervPrice(stockId);
+            int prevPrice = stockDetailRepository.getPervPrice(stockId);
 
             // 5. 전일 대비 변동액 및 등락률
             int priceChange = currentPrice - prevPrice;

@@ -19,6 +19,6 @@ public class NewsController {
     public String getNewsList(Model model) {
         List<String> newsList = newsService.getNewsList();
         model.addAttribute("newsList", newsList);
-        return "templates/NewsList";
+        return "NewsList";
     }
 }

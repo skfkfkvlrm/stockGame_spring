@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface MyAssetMapper {
+public interface MyAssetRepository {
 
     Integer getMyValue(int stockId, String studentId);
 
