@@ -39,13 +39,12 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(StudentLoginRequest request, Model model,
-                        @SessionAttribute(name = "studentId", required = false) String studentId) {
+    public String login(StudentLoginRequest request, Model model, HttpSession session) {
         StudentResponse response = memberService.login(request);
         if (response != null) {
-            model.addAttribute("studentId", response.getStudentId());
-            model.addAttribute("loginOk", response.getStudentId());
-            model.addAttribute("info", response);
+            session.setAttribute("studentId", response.getStudentId());
+            session.setAttribute("loginOk", response.getStudentId());
+            session.setAttribute("info", response);
             return "redirect:/asset/";
         } else {
             model.addAttribute("errorMessage", "로그인에 실패했습니다.");
