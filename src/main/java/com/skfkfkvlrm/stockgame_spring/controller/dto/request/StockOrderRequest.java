@@ -16,5 +16,5 @@ public class StockOrderRequest {
     @Min(value = 1, message = "주문 가격은 1 이상이어야 합니다.")
     private int price;
     private String content;
-    private String state;
+    private OrderStatus state;
 }

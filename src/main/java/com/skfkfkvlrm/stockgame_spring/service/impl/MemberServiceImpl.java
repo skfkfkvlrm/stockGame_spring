@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (savedData != null) {
             return StudentResponse.builder()
-                    .studentId((String) savedData.get("student_id"))
+                    .studentId(request.getStudentId())
                     .name((String) savedData.get("name"))
                     .grade((Integer) savedData.get("grade"))
                     .className((String) savedData.get("class_name"))
