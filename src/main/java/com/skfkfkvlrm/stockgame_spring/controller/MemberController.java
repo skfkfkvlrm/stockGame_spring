@@ -55,7 +55,7 @@ public class MemberController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/member/login";
+        return "redirect:/members/login";
     }
 
     @ResponseBody
