@@ -3,7 +3,7 @@
 <mapper namespace="com.skfkfkvlrm.stockgame_spring.repository.CouponRepository">
 
 	<!-- 만들어져있는 쿠폰 모두 조회 -->
-	<select id="getCouponList" resultType="com.school.stockGame.vo.CouponVO">
+	<select id="getCouponList" resultType="com.skfkfkvlrm.stockgame_spring.domain.Coupon">
 		SELECT coupon_id, name, price FROM coupons
 	</select>
 	
@@ -13,27 +13,27 @@
 	</select>
 	
 	<!-- 쿠폰 구매 (쿠폰구매내역 추가) -->
-	<insert id="setPurchaseRecord" parameterType="com.school.stockGame.vo.CouponPurchaseVO">
+	<insert id="setPurchaseRecord">
 		INSERT INTO coupon_purchase (price, name, state, created_date, student_id, coupon_id)
-		VALUES(#{price}, #{name}, #{state}, NOW(), #{studentId}, #{couponId})
+		VALUES(#{couponPrice}, #{couponName}, #{state}, NOW(), (SELECT id FROM students WHERE student_id = #{studentId}), #{couponId})
 	</insert>
 	
 	<!-- 쿠폰 구매시 학생의 가용포인트 차감 및 보유쿠폰 개수 업데이트(가용포인트 부족시 구매 불가) -->
-	<update id="setStudentAssets" parameterType="com.school.stockGame.vo.CouponVO">
-		UPDATE students SET total_point = total_point - #{price}, total_coupon = total_coupon + 1 
-		WHERE student_id = #{studentId} AND total_point >= #{price}
+	<update id="setStudentAssets">
+		UPDATE students SET total_point = total_point - #{couponPrice}, total_coupon = total_coupon + 1
+		WHERE student_id = #{studentId} AND total_point >= #{couponPrice}
 	</update>
 	
 	<!-- 나의 보유 쿠폰 조회 -->
-	<select id="getMyCouponList" parameterType="String" resultType="com.school.stockGame.vo.CouponPurchaseVO">
-		SELECT c.name, cp.price 
+	<select id="getMyCouponList" parameterType="String" resultType="com.skfkfkvlrm.stockgame_spring.domain.CouponPurchase">
+		SELECT cp.name, cp.price
 		FROM coupon_purchase cp 
 		INNER JOIN coupons c ON cp.coupon_id = c.coupon_id
-		WHERE cp.student_id= #{studentId}
+		WHERE cp.student_id = (SELECT id FROM students WHERE student_id = #{studentId})
 	</select>
 	
 	<!-- 내가 구매한 쿠폰 수량 -->
 	<select id="getMyCouponCount" parameterType="String" resultType="int">
-		SELECT COUNT(*) FROM coupon_purchase WHERE student_id = #{studentId}
+		SELECT COUNT(coupon_id) FROM coupon_purchase WHERE student_id = (SELECT id FROM students WHERE student_id = #{studentId})
 	</select>
 </mapper>

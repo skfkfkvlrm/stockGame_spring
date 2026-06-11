@@ -12,7 +12,7 @@
                     cp.name AS history_content, 
                     -cp.price AS point_change 
                 FROM coupon_purchase cp
-                WHERE cp.student_id = #{studentId}
+                WHERE cp.student_id = (SELECT id FROM students WHERE student_id = #{studentId})
 
                 UNION ALL 
 
@@ -22,7 +22,7 @@
                     gp.content AS history_content, 
                     gp.point AS point_change 
                 FROM get_points gp
-                WHERE gp.student_id = #{studentId}
+                WHERE gp.student_id = (SELECT id FROM students WHERE student_id = #{studentId})
 
                 UNION ALL 
 
@@ -34,7 +34,7 @@
                 FROM transactions t
                 JOIN orders o ON t.buy_order_id = o.order_id
                 JOIN stocks s ON o.stock_id = s.stock_id
-                WHERE o.student_id = #{studentId}
+                WHERE o.student_id = (SELECT id FROM students WHERE student_id = #{studentId})
 
                 UNION ALL 
 
@@ -46,7 +46,7 @@
                 FROM transactions t
                 JOIN orders o ON t.sell_order_id = o.order_id
                 JOIN stocks s ON o.stock_id = s.stock_id
-                WHERE o.student_id = #{studentId}
+                WHERE o.student_id = (SELECT id FROM students WHERE student_id = #{studentId})
 
             ) history
            ORDER BY history_date DESC
