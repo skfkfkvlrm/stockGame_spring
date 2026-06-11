@@ -1,5 +1,6 @@
 package com.skfkfkvlrm.stockgame_spring.service.impl;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.PointHistoryResponse;
 import com.skfkfkvlrm.stockgame_spring.repository.MyPointHistoryRepository;
 import com.skfkfkvlrm.stockgame_spring.service.MyPointHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class MyPointHistoryServiceImpl implements MyPointHistoryService {
     private final MyPointHistoryRepository myPointHistoryRepository;
 
     @Override
-    public List<Map<String, Object>> getMyPointHistoryList(String studentId) {
+    public List<PointHistoryResponse> getMyPointHistoryList(String studentId) {
         return myPointHistoryRepository.getMyPointHistoryList(studentId);
     }
 }

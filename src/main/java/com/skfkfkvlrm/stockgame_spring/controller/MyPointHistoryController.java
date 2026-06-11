@@ -1,11 +1,12 @@
 package com.skfkfkvlrm.stockgame_spring.controller;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.PointHistoryResponse;
 import com.skfkfkvlrm.stockgame_spring.service.MyPointHistoryService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class MyPointHistoryController {
         if (studentId == null) {
             return "redirect:/login";
         }
-        List<Map<String, Object>> historyList = myPointHistoryService.getMyPointHistoryList(studentId);
+        List<PointHistoryResponse> historyList = myPointHistoryService.getMyPointHistoryList(studentId);
         model.addAttribute("historyList", historyList);
         return "MyPointHistory";
     }

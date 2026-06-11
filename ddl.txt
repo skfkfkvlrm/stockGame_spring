@@ -38,7 +38,7 @@ CREATE TABLE coupon_purchase
     coupon_id    INT          NOT NULL,
     student_id   VARCHAR(100) NOT NULL,
     FOREIGN KEY (coupon_id) REFERENCES coupons (coupon_id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES students (student_id) ON DELETE CASCADE
+    FOREIGN KEY (student_id) REFERENCES coupons (student_id) ON DELETE CASCADE
 );
 
 -- 4. 포인트 획득/지급 이력 테이블

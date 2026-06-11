@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 @RestController
 @RequestMapping("/api/asset")
@@ -17,8 +18,7 @@ public class MyAssetRestController {
     private final MyAssetService myAssetService;
 
     @GetMapping("/dashboard")
-    public ResponseEntity<DashboardResponse> getDashboard(HttpSession session) {
-        String studentId = (String) session.getAttribute("studentId");
+    public ResponseEntity<DashboardResponse> getDashboard(@SessionAttribute(name = "studentId", required = false) String studentId) {
         if (studentId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

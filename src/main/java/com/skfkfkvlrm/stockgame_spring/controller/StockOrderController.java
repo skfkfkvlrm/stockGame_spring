@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -17,9 +18,9 @@ public class StockOrderController {
 
     @PostMapping("/cancel")
     public String cancelOrder(@RequestParam int orderId, @RequestParam int stockId,
-                              HttpSession session, RedirectAttributes redirectAttributes) {
+                              @SessionAttribute(name = "studentId", required = false) String studentId,
+                              RedirectAttributes redirectAttributes) {
         // 1. 세션 체크
-        String studentId = (String) session.getAttribute("studentId");
         if (studentId == null) {
             return "redirect:/login";
         }

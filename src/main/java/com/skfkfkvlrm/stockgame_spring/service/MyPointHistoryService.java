@@ -1,8 +1,9 @@
 package com.skfkfkvlrm.stockgame_spring.service;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.PointHistoryResponse;
+
 import java.util.List;
-import java.util.Map;
 
 public interface MyPointHistoryService {
-    List<Map<String, Object>> getMyPointHistoryList(String studentId);
+    List<PointHistoryResponse> getMyPointHistoryList(String studentId);
 }
