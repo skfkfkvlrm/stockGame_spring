@@ -1,9 +1,9 @@
 package com.skfkfkvlrm.stockgame_spring.domain;
 
 public enum OrderStatus {
-    PENDING,    //대기
-    FILLED,     //체결
-    CANCELED,   //취소
-    SELL,       //매도
-    BUY         //매수
+    대기,    //대기
+    체결,     //체결
+    취소,   //취소
+    매도,       //매도
+    매수         //매수
 }

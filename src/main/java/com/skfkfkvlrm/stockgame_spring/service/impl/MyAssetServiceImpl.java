@@ -27,21 +27,21 @@ public class MyAssetServiceImpl implements MyAssetService {
         int totalPoint = myAssetRepository.getPointValue(studentId);
         int totalCoupon = myAssetRepository.getTotalCoupon(studentId);
 
-        List<Integer> myStockNos = myAssetRepository.getMyStockNos(studentId, OrderStatus.FILLED);
+        List<Integer> myStockNos = myAssetRepository.getMyStockNos(studentId, OrderStatus.체결);
 
         List<StockInfoResponse> stockList = new ArrayList<>();
         int totalStockValue = 0;
         int totalProfit = 0;
 
         for (int stockId : myStockNos) {
-            int amount = myAssetRepository.getStockAmount(studentId, stockId, OrderStatus.FILLED);
+            int amount = myAssetRepository.getStockAmount(studentId, stockId, OrderStatus.체결);
 
             if (amount > 0) {
                 String stockName = myAssetRepository.getStockName(stockId);
                 int currentPrice = stockDetailRepository.getStockPrice(stockId);
-                int averagePrice = myAssetRepository.getAveragePrice(studentId, stockId, OrderStatus.FILLED, "매수");
-                int purchasePrice = myAssetRepository.getPurchasePrice(studentId, stockId, OrderStatus.FILLED, "매수");
-                int profit = myAssetRepository.getStockProfit(studentId, stockId, OrderStatus.FILLED);
+                int averagePrice = myAssetRepository.getAveragePrice(studentId, stockId, OrderStatus.체결, "매수");
+                int purchasePrice = myAssetRepository.getPurchasePrice(studentId, stockId, OrderStatus.체결, "매수");
+                int profit = myAssetRepository.getStockProfit(studentId, stockId, OrderStatus.체결);
 
                 totalStockValue += amount * currentPrice;
                 totalProfit += profit;

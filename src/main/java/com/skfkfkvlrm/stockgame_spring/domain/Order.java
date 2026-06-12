@@ -30,6 +30,9 @@ public class Order {
     @UpdateTimestamp
     private LocalDateTime updatedDate;
     private LocalDateTime deletedDate;
+    private String studentId;
+    private int stockId;
+
 
     @Override
     public String toString() {

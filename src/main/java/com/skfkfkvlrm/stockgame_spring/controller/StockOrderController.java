@@ -6,11 +6,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/orders")
@@ -19,14 +18,41 @@ public class StockOrderController {
     private final StockOrderService stockOrderService;
 
     @PostMapping("/buy")
-    public String buyStock(@Valid StockOrderRequest request) {
+    public String buyStock(@Valid StockOrderRequest request,
+                           HttpSession session, RedirectAttributes redirectAttributes) {
+        session.setAttribute("studentId", request.getStudentId());
+        if (session.getAttribute("studentId") == null) {
+            return "redirect:/login";
+        }
+        String result = stockOrderService.buyStock(request);
+        redirectAttributes.addFlashAttribute("Message", result);
+        Map<String, Object> info = (Map<String, Object>) session.getAttribute("info");
+        if (info != null) {
+            session.setAttribute("info", info);
+        }
+        return "redirect:/stock/" + request.getStockId();
     }
 
-                           @PostMapping("/cancel")
+    @PostMapping("/sell")
+    public String sellStock(@Valid StockOrderRequest request,
+                            HttpSession session, RedirectAttributes redirectAttributes) {
+        session.setAttribute("studentId", request.getStudentId());
+        if (session.getAttribute("studentId") == null) {
+            return "redirect:/login";
+        }
+        String result = stockOrderService.sellStock(request);
+        redirectAttributes.addFlashAttribute("Message", result);
+        Map<String, Object> info = (Map<String, Object>) session.getAttribute("info");
+        if (info != null) {
+            session.setAttribute("info", info);
+        }
+        return "redirect:/stock/" + request.getStockId();
+    }
+
+    @PostMapping("/cancel")
     public String cancelOrder(@RequestParam int orderId, @RequestParam int stockId,
-                           @SessionAttribute(name = "studentId", required = false) String studentId,
-                           RedirectAttributes redirectAttributes) {
-        // 1. 세션 체크
+                              @SessionAttribute(name = "studentId", required = false) String studentId,
+                              RedirectAttributes redirectAttributes) {
         if (studentId == null) {
             return "redirect:/login";
         }

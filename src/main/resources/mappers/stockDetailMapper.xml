@@ -101,4 +101,22 @@
 		INSERT INTO orders (content, price, amount, state, created_date, student_id, stock_id)
 		VALUES (#{content}, #{price}, #{amount}, #{state}, NOW(), (SELECT id FROM students WHERE student_id = #{studentId}), #{stockId})
 	</insert>
+	<select id="getMatchOrderList" resultType="com.skfkfkvlrm.stockgame_spring.domain.Order">
+		SELECT o.order_id, o.content, o.price, o.amount, o.state, o.created_date, s.student_id, o.stock_id
+		FROM orders o
+		JOIN students s ON o.student_id = s.id
+		WHERE o.stock_id = #{stockId}
+		  AND o.state = '대기'
+		  AND o.content = #{content}
+		  AND o.price = #{orderPrice}
+		  AND s.student_id != (SELECT id FROM students WHERE student_id = #{studentId})
+		ORDER BY created_date ASC
+			FOR UPDATE
+	</select>
+	<update id="updateOrder">
+		UPDATE orders
+		SET amount = #{amount},
+		    state = #{state}
+		WHERE order_id = #{orderId}
+	</update>
 </mapper>
