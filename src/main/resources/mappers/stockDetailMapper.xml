@@ -32,40 +32,40 @@
 	<select id="getPervPrice" parameterType="int" resultType="int">
 		SELECT prev_price FROM stocks WHERE stock_id = #{stockId}
 	</select>
-	<select id="getStudentStockAmount" parameterType="map" resultType="int">
+	<select id="getStudentStockAmount" resultType="int">
 		SELECT COALESCE(SUM(CASE WHEN content='매수' THEN amount ELSE -amount END), 0) AS amount
-		FROM orders WHERE student_id = #{studentId} AND stock_id = #{stockId} AND state='체결'
+		FROM orders WHERE student_id = (SELECT id FROM students WHERE student_id = #{studentId}) AND stock_id = #{stockId} AND state='체결'
 	</select>
 	<select id="getStudentPoint" parameterType="String" resultType="int">
 		SELECT total_point FROM students WHERE student_id = #{studentId}
 	</select>
-	<insert id="setOrderRequest" parameterType="map">
+	<insert id="setOrderRequest">
 		INSERT INTO orders (content, price, amount, state, created_date, student_id, stock_id)
-		VALUES (#{content}, #{price}, #{amount}, #{state}, NOW(), #{studentId}, #{stockId})
+		VALUES (#{content}, #{price}, #{amount}, #{state}, NOW(), (SELECT id FROM students WHERE student_id = #{studentId}), #{stockId})
 	</insert>
-	<select id="getTotalOrder" parameterType="int" resultType="com.school.stockGame.vo.OrderVO">
+	<select id="getTotalOrder" parameterType="int" resultType="com.skfkfkvlrm.stockgame_spring.domain.Order">
 		SELECT price, amount, content FROM orders 
 		WHERE stock_id = #{stockId} AND state = '대기' ORDER BY created_date ASC
 	</select>
-	<select id="getTotalSellOrder" parameterType="int" resultType="com.school.stockGame.vo.OrderVO">
+	<select id="getTotalSellOrder" parameterType="int" resultType="com.skfkfkvlrm.stockgame_spring.domain.Order">
 		SELECT price, amount, content FROM orders 
 		WHERE stock_id = #{stockId} AND state = '대기' AND content = '매도' ORDER BY created_date ASC
 	</select>
-	<select id="getTotalBuyOrder" parameterType="int" resultType="com.school.stockGame.vo.OrderVO">
+	<select id="getTotalBuyOrder" parameterType="int" resultType="com.skfkfkvlrm.stockgame_spring.domain.Order">
 		SELECT price, amount, content FROM orders 
 		WHERE stock_id = #{stockId} AND state = '대기' AND content = '매수' ORDER BY created_date ASC
 	</select>
-	<select id="getTotalMyOrder" parameterType="map" resultType="com.school.stockGame.vo.OrderVO">
+	<select id="getTotalMyOrder" resultType="com.skfkfkvlrm.stockgame_spring.domain.Order">
 		SELECT order_id, content, price, amount, created_date, state FROM orders
-		WHERE student_id = #{studentId} AND stock_id = #{stockId} AND state ='대기' ORDER BY created_date ASC
+		WHERE student_id = (SELECT id FROM students WHERE student_id = #{studentId}) AND stock_id = #{stockId} AND state ='대기' ORDER BY created_date ASC
 	</select>
-	<update id="setStudentPointUp" parameterType="com.school.stockGame.vo.OrderVO">
-		UPDATE students SET total_point = total_point + #{totalPoint} WHERE student_id = #{studentId}
+	<update id="setStudentPointUp">
+		UPDATE students SET total_point = total_point + #{totalPrice} WHERE student_id = #{studentId}
 	</update>
-	<update id="setStudentPointDown" parameterType="com.school.stockGame.vo.OrderVO">
-		UPDATE students SET total_point = total_point - #{totalPoint} WHERE student_id = #{studentId}
+	<update id="setStudentPointDown">
+		UPDATE students SET total_point = total_point - #{totalPrice} WHERE student_id = #{studentId}
 	</update>
-	<insert id="setMatchedOrder" parameterType="com.school.stockGame.vo.TransactionVO">
+	<insert id="setMatchedOrder">
 		INSERT INTO transactions (created_date, buy_order_id, sell_order_id)
 		VALUES (NOW(), #{buyOrderId}, #{sellOrderId})
 	</insert>
@@ -81,19 +81,24 @@
 	<select id="getStockPubInfo" parameterType="int" resultType="map">
 		SELECT publication_balance, publication_price FROM stocks WHERE stock_id = #{stockId}
 	</select>
-	<update id="setStockPubBalance" parameterType="map">
-		UPDATE stocks SET publication_balance = publication_balance - #{amount} WHERE stock_id = #{stockId}
+	<update id="setStockPubBalance">
+		UPDATE stocks SET publication_balance = publication_balance - #{buyAmount} WHERE stock_id = #{stockId}
 	</update>
-	<select id="getMatchOrder" parameterType="map" resultType="map">
+	<select id="getMatchOrder" resultType="map">
 		SELECT order_id, content, price, amount, state, created_date, student_id, stock_id
 		FROM orders
-		WHERE stock_id = #{stockId} AND state = '대기' AND content = #{content} AND price = #{price}
-		AND amount = #{amount} AND student_id != #{studentId}
+		WHERE stock_id = #{stockId} AND state = '대기' AND content = #{content} AND price = #{orderPrice}
+		AND amount = #{orderAmount} AND student_id != (SELECT id FROM students WHERE student_id = #{studentId})
 		ORDER BY created_date ASC LIMIT 1 FOR UPDATE
 	</select>
-	<select id="getMyOrderNo" parameterType="map" resultType="int">
+	<select id="getMyOrderNo" resultType="int">
 		SELECT order_id FROM orders
-		WHERE content = #{content} AND student_id = #{studentId} AND stock_id = #{stockId}
+		WHERE content = #{content} AND student_id = (SELECT id FROM students WHERE student_id = #{studentId}) AND stock_id = #{stockId}
 		AND state = #{state} AND amount = #{amount} AND price = #{price} ORDER BY created_date DESC LIMIT 1
 	</select>
+	<insert id="insertOrder" parameterType="com.skfkfkvlrm.stockgame_spring.domain.Order"
+	        useGeneratedKeys="true" keyProperty="orderId" keyColumn="order_id">
+		INSERT INTO orders (content, price, amount, state, created_date, student_id, stock_id)
+		VALUES (#{content}, #{price}, #{amount}, #{state}, NOW(), (SELECT id FROM students WHERE student_id = #{studentId}), #{stockId})
+	</insert>
 </mapper>
