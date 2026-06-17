@@ -14,20 +14,20 @@ public interface CouponRepository {
     List<Coupon> getCouponList();
 
     // 쿠폰 구매
-    String setBuyCoupon(@Param("studentId") String studentId, @Param("couponPrice") int couponPrice, @Param("couponName") String couponName, @Param("state") CouponPurchaseStatus state, @Param("couponId") int couponId);
+    String setBuyCoupon(String studentId, int couponPrice, String couponName, CouponPurchaseStatus state, int couponId);
 
     // 학생이 구매한 쿠폰 개수 조회
-    int getMyCouponCount(@Param("studentId") String studentId);
+    int getMyCouponCount(String studentId);
 
     // 학생 보유 포인트 조회
-    int getStudentPoint(@Param("studentId") String studentId);
+    int getStudentPoint(String studentId);
 
     // 쿠폰 구매 내역 등록
-    int setPurchaseRecord(@Param("studentId") String studentId, @Param("couponId") int couponId, @Param("couponName") String couponName, @Param("couponPrice") int couponPrice, @Param("state") CouponPurchaseStatus state);
+    int setPurchaseRecord(String studentId, int couponId, String couponName, int couponPrice, CouponPurchaseStatus state);
 
     // 학생 포인트 차감 및 보유 쿠폰 수량 증가
-    int setStudentAssets(@Param("studentId") String studentId, @Param("couponPrice") int couponPrice);
+    int setStudentAssets(String studentId, int couponPrice);
 
     // 내가 보유한 쿠폰 조회
-    List<CouponPurchase> getMyCouponList(@Param("studentId") String studentId);
+    List<CouponPurchase> getMyCouponList(String studentId);
 }

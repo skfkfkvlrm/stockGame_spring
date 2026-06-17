@@ -41,6 +41,6 @@ public class CouponServiceImpl implements CouponService {
             throw new IllegalStateException("쿠폰 구매 중 오류가 발생했습니다. (잔액 부족)");
         }
         // 3. 쿠폰 구매 정보 구매내역에 추가
-        couponRepository.setPurchaseRecord(studentId, couponId, couponName, couponPrice, CouponPurchaseStatus.NOT_USED);
+        couponRepository.setPurchaseRecord(studentId, couponId, couponName, couponPrice, CouponPurchaseStatus.사용전);
     }
 }

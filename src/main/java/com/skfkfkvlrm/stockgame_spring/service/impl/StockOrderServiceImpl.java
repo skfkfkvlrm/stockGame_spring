@@ -39,7 +39,7 @@ public class StockOrderServiceImpl implements StockOrderService {
                 return "발행 가격(" + pubPrice + ")보다 낮은 가격으로 매수할 수 없습니다.";
             }
 
-            Order order = createOrder(request, OrderStatus.SELL, OrderStatus.FILLED);
+            Order order = createOrder(request, OrderStatus.매도, OrderStatus.체결);
             stockDetailRepository.insertOrder(order);
             stockDetailRepository.setMatchedOrder(order.getOrderId(), null);
             stockDetailRepository.setStockPubBalance(request.getAmount(), request.getStockId());
@@ -48,14 +48,14 @@ public class StockOrderServiceImpl implements StockOrderService {
             return "매수 주문이 체결되었습니다.";
         }
         // b. 학생 간 거래
-        Map<String, Object> matchOrder = stockDetailRepository.getMatchOrder(request.getStockId(), request.getPrice(), request.getAmount(), request.getStudentId(), OrderStatus.BUY);
+        Map<String, Object> matchOrder = stockDetailRepository.getMatchOrder(request.getStockId(), request.getPrice(), request.getAmount(), request.getStudentId(), OrderStatus.매수);
         if (matchOrder != null) {
             int sellOrderId = getIntOrDefault(matchOrder, "order_id");
             String sellerId = (String) matchOrder.get("student_id");
             // 대상 주문 '대기' -> '체결'
             stockDetailRepository.setOrderStateMatched(sellOrderId);
             // 내 주문 '체결'로 등록
-            Order order = createOrder(request, OrderStatus.BUY, OrderStatus.FILLED);
+            Order order = createOrder(request, OrderStatus.매수, OrderStatus.체결);
             stockDetailRepository.insertOrder(order);
             // 포인트 처리 및 거래내역 등록
             stockDetailRepository.setMatchedOrder(order.getOrderId(), sellOrderId);
@@ -64,7 +64,7 @@ public class StockOrderServiceImpl implements StockOrderService {
             return "매수 주문이 체결되었습니다.";
         }
         // c. 매수 대기 등록
-        Order order = createOrder(request, OrderStatus.BUY, OrderStatus.PENDING);
+        Order order = createOrder(request, OrderStatus.매수, OrderStatus.대기);
         stockDetailRepository.insertOrder(order);
         stockDetailRepository.setStudentPointDown(totalOrderPrice, request.getStudentId());
         return "매수 주문이 등록되었습니다.";
@@ -85,13 +85,13 @@ public class StockOrderServiceImpl implements StockOrderService {
         }
         int totalOrderPrice = request.getPrice() * request.getAmount();
         // 2. 학생 간 거래
-        Map<String, Object> matchOrder = stockDetailRepository.getMatchOrder(request.getStockId(), request.getPrice(), request.getAmount(), request.getStudentId(), OrderStatus.SELL);
+        Map<String, Object> matchOrder = stockDetailRepository.getMatchOrder(request.getStockId(), request.getPrice(), request.getAmount(), request.getStudentId(), OrderStatus.매도);
         if (matchOrder != null) {
             int buyOrderId = getIntOrDefault(matchOrder, "order_id");
             // 대상 주문 '대기' -> '체결'
             stockDetailRepository.setOrderStateMatched(buyOrderId);
             // 내 주문 '체결'로 등록
-            Order order = createOrder(request, OrderStatus.SELL, OrderStatus.FILLED);
+            Order order = createOrder(request, OrderStatus.매도, OrderStatus.체결);
             stockDetailRepository.insertOrder(order);
             // 포인트 처리 및 거래내역 등록
             stockDetailRepository.setMatchedOrder(order.getOrderId(), buyOrderId);
@@ -100,7 +100,7 @@ public class StockOrderServiceImpl implements StockOrderService {
             return "매도가 완료되었습니다.";
         }
         // 3. 매도 대기 등록
-        Order order = createOrder(request, OrderStatus.SELL, OrderStatus.PENDING);
+        Order order = createOrder(request, OrderStatus.매도, OrderStatus.대기);
         stockDetailRepository.insertOrder(order);
         return "매도주문이 대기처리 되었습니다.";
     }
@@ -108,7 +108,7 @@ public class StockOrderServiceImpl implements StockOrderService {
     private Order createOrder(StockOrderRequest request, OrderStatus content, OrderStatus state) {
         return Order.builder()
                 .content(content)
-                .state(state.equals(OrderStatus.FILLED) ? OrderStatus.FILLED : OrderStatus.PENDING)
+                .state(state.equals(OrderStatus.체결) ? OrderStatus.체결 : OrderStatus.대기)
                 .price(request.getPrice())
                 .amount(request.getAmount())
                 .build();
@@ -134,10 +134,10 @@ public class StockOrderServiceImpl implements StockOrderService {
             throw new IllegalArgumentException("본인 주문이 아닙니다. 주문 번호: " + orderId);
         }
         // 3. 주문 상태가 취소 가능한 상태('대기')인지 검증
-        if (order.getState() == OrderStatus.FILLED) {
+        if (order.getState() == OrderStatus.체결) {
             throw new IllegalStateException("이미 체결된 주문은 취소할 수 없습니다.");
         }
-        if (order.getState() == OrderStatus.CANCELED) {
+        if (order.getState() == OrderStatus.취소) {
             throw new IllegalStateException("이미 취소된 주문입니다.");
         }
         // 4. [부분 체결 대비]
@@ -146,7 +146,7 @@ public class StockOrderServiceImpl implements StockOrderService {
             int refundAmount = order.getPrice() * order.getAmount();
             stockDetailRepository.setStudentPointUp(refundAmount, studentId);
         }
-        // 5. 데이터베이스 주문 상태를 '취소'로 업데이트
+        // 5. 주문 상태를 '취소'로 업데이트
         stockDetailRepository.setOrderStateCancel(orderId);
         // 6. 주식 번호 리턴
         return order.getOrderId();

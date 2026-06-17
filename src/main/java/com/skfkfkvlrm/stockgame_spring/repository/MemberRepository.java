@@ -12,7 +12,7 @@ public interface MemberRepository {
     int setMember(StudentJoinRequest request);
 
     // 로그인
-    Map<String, Object> login(@Param("studentId") String studentId, @Param("password") String password);
+    Map<String, Object> login(String studentId, String password);
 
     // 아이디 중복체크
     int getIdCheck(String studentId);
