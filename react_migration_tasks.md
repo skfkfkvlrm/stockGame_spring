@@ -1,0 +1,22 @@
+# React SPA 마이그레이션 작업 목록
+
+- `[/]` 1단계: React 프로젝트 초기화
+  - `[ ]` Vite + React 프로젝트 생성 (예: `react-frontend`) - Node.js 설치 후 진행 필요
+  - `[ ]` `react-router-dom` 및 `axios` 패키지 설치
+  - `[x]` `App.jsx`에 기본 라우팅 구조 설정 (가이드 코드 작성 완료)
+- `[/]` 2단계: 정적 UI 변환 (JSP -> React)
+  - `[x]` `SideBar.jsp`를 `<Sidebar />` 컴포넌트로 변환 (가이드 코드 작성 완료)
+  - `[x]` `StockList.jsp`를 `<StockList />` 페이지로 변환 (가이드 코드 작성 완료)
+  - `[x]` `Login.jsp`를 `<Login />` 페이지로 변환 (가이드 코드 작성 완료)
+  - `[ ]` `StockDetail.jsp`를 `<StockDetail />` 페이지로 변환
+  - `[ ]` `AddMember.jsp`를 `<AddMember />` 페이지로 변환
+  - `[ ]` `MyAssets.jsp`를 `<MyAssets />` 페이지로 변환
+  - `[ ]` 남은 JSP 페이지들을 React 컴포넌트로 변환
+  - `[ ]` 기존 CSS 파일들을 가져와 연동
+- `[ ]` 3단계: 백엔드 API 변환 (가이드 및 구현)
+  - `[ ]` 프론트엔드에서 필요한 REST 엔드포인트 파악
+  - `[ ]` Spring `@Controller`를 `@RestController`로 변환 가이드 제공
+  - `[ ]` Spring Boot에 CORS 설정 추가
+- `[ ]` 4단계: 데이터 연동
+  - `[ ]` React 컴포넌트 내에 데이터 Fetch(`useEffect` 사용) 로직 구현
+  - `[ ]` 받아온 데이터를 React State에 바인딩
