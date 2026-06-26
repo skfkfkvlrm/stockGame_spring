@@ -1,7 +1,6 @@
 package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.service.CouponService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +23,8 @@ public class CouponController {
     }
 
     @GetMapping("/my-coupons")
-    public String getMyCouponList(@SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
+    public String getMyCouponList(@SessionAttribute(name = "studentId", required = false) String studentId,
+            Model model) {
         if (studentId == null) {
             return "redirect:/login";
         } else {
@@ -34,7 +34,9 @@ public class CouponController {
     }
 
     @PostMapping("/buy")
-    public String buyCoupon(int couponId, int couponPrice, String couponName, @SessionAttribute(name = "studentId", required = false) String studentId, RedirectAttributes redirectAttributes) {
+    public String buyCoupon(int couponId, int couponPrice, String couponName,
+            @SessionAttribute(name = "studentId", required = false) String studentId,
+            RedirectAttributes redirectAttributes) {
         if (studentId == null) {
             return "redirect:/login";
         }

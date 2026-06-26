@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,7 +16,8 @@ public class MyPointHistoryController {
     private final MyPointHistoryService myPointHistoryService;
 
     @GetMapping("/history")
-    public String getMyPointHistory(@SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
+    public String getMyPointHistory(@SessionAttribute(name = "studentId", required = false) String studentId,
+            Model model) {
         if (studentId == null) {
             return "redirect:/login";
         }

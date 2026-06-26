@@ -4,7 +4,6 @@ import com.skfkfkvlrm.stockgame_spring.domain.Coupon;
 import com.skfkfkvlrm.stockgame_spring.domain.CouponPurchase;
 import com.skfkfkvlrm.stockgame_spring.domain.CouponPurchaseStatus;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,7 +22,8 @@ public interface CouponRepository {
     int getStudentPoint(String studentId);
 
     // 쿠폰 구매 내역 등록
-    int setPurchaseRecord(String studentId, int couponId, String couponName, int couponPrice, CouponPurchaseStatus state);
+    int setPurchaseRecord(String studentId, int couponId, String couponName, int couponPrice,
+            CouponPurchaseStatus state);
 
     // 학생 포인트 차감 및 보유 쿠폰 수량 증가
     int setStudentAssets(String studentId, int couponPrice);

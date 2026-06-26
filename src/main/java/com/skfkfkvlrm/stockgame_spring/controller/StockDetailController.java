@@ -2,7 +2,6 @@ package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockDetailResponse;
 import com.skfkfkvlrm.stockgame_spring.service.StockDetailService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,8 @@ public class StockDetailController {
 
     // 주식 상세 페이지 진입
     @GetMapping("/{stockId}")
-    public String getStockDetail(@PathVariable("stockId") int stockId, @SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
+    public String getStockDetail(@PathVariable("stockId") int stockId,
+            @SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
         if (studentId == null) {
             return "redirect:/login";
         }
@@ -33,7 +33,7 @@ public class StockDetailController {
             model.addAttribute("prevPrice", detailInfo.getPrevPrice());
             model.addAttribute("pubPrice", detailInfo.getPubPrice());
             model.addAttribute("pubAmount", detailInfo.getPubAmount());
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return "redirect:/asset/";
         }
         return "view/StockDetail";

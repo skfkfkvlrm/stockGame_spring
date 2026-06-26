@@ -2,7 +2,6 @@ package com.skfkfkvlrm.stockgame_spring.repository;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.request.StudentJoinRequest;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
 

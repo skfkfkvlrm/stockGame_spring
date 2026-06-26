@@ -26,6 +26,7 @@ public class StockOrderController {
         }
         String result = stockOrderService.buyStock(request);
         redirectAttributes.addFlashAttribute("Message", result);
+        @SuppressWarnings("unchecked")
         Map<String, Object> info = (Map<String, Object>) session.getAttribute("info");
         if (info != null) {
             session.setAttribute("info", info);
@@ -42,6 +43,7 @@ public class StockOrderController {
         }
         String result = stockOrderService.sellStock(request);
         redirectAttributes.addFlashAttribute("Message", result);
+        @SuppressWarnings("unchecked")
         Map<String, Object> info = (Map<String, Object>) session.getAttribute("info");
         if (info != null) {
             session.setAttribute("info", info);

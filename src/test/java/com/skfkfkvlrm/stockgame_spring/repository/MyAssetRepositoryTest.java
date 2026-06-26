@@ -1,16 +1,11 @@
 package com.skfkfkvlrm.stockgame_spring.repository;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.request.StudentJoinRequest;
-import com.skfkfkvlrm.stockgame_spring.domain.Student;
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertTrueValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
-
-import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -36,10 +31,10 @@ public class MyAssetRepositoryTest {
 
     @Test
     void testSelectUserPoint_보유포인트_조회() {
-        //Given
-        //When
+        // Given
+        // When
         Integer pointValue = myAssetRepository.getPointValue("testUser");
-        //Then
+        // Then
         assertNotNull(pointValue);
         assertEquals(30000, pointValue);
     }

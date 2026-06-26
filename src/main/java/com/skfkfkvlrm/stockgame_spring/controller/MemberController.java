@@ -6,7 +6,6 @@ import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StudentResponse;
 import com.skfkfkvlrm.stockgame_spring.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

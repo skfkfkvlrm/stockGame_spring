@@ -2,7 +2,6 @@ package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.DashboardResponse;
 import com.skfkfkvlrm.stockgame_spring.service.MyAssetService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
