@@ -15,6 +15,20 @@
         SELECT name, grade, class_name, total_point FROM students WHERE student_id = #{studentId} AND password = #{password}
     </select>
 
+    <!-- 아이디 단건 조회 -->
+    <select id="findByStudentId" resultType="Map">
+        SELECT name, grade, class_name, total_point, password 
+        FROM students 
+        WHERE student_id = #{studentId}
+    </select>
+
+    <!-- 비밀번호 마이그레이션 업데이트 -->
+    <update id="updatePassword">
+        UPDATE students 
+        SET password = #{password} 
+        WHERE student_id = #{studentId}
+    </update>
+
     <!-- 아이디 중복체크 -->
     <select id="getIdCheck" parameterType="String" resultType="int">
         SELECT COUNT(*) FROM students WHERE student_id = #{studentId}

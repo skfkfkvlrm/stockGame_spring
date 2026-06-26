@@ -2,64 +2,43 @@ package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.request.StudentJoinRequest;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.request.StudentLoginRequest;
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.ApiResponse;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StudentResponse;
 import com.skfkfkvlrm.stockgame_spring.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/members")
+@RestController
+@RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/join")
-    public String joinForm() {
-        return "AddMember";
-    }
-
     @PostMapping("/join")
-    public String join(StudentJoinRequest request, Model model) {
+    public ApiResponse<Boolean> join(@RequestBody StudentJoinRequest request) {
         boolean isJoined = memberService.join(request);
-        if (isJoined) {
-            return "redirect:/members/login";
-        } else {
-            model.addAttribute("errorMessage", "회원가입에 실패했습니다.");
-            return "AddMember";
-        }
-    }
-
-    @GetMapping("/login")
-    public String loginForm() {
-        return "Login";
+        return ApiResponse.success("회원가입 성공", isJoined);
     }
 
     @PostMapping("/login")
-    public String login(StudentLoginRequest request, Model model, HttpSession session) {
+    public ApiResponse<StudentResponse> login(@RequestBody StudentLoginRequest request, HttpSession session) {
         StudentResponse response = memberService.login(request);
-        if (response != null) {
-            session.setAttribute("studentId", response.getStudentId());
-            session.setAttribute("loginOk", response.getStudentId());
-            session.setAttribute("info", response);
-            return "redirect:/asset/";
-        } else {
-            model.addAttribute("errorMessage", "로그인에 실패했습니다.");
-            return "Login";
-        }
+        session.setAttribute("studentId", response.getStudentId());
+        session.setAttribute("loginOk", response.getStudentId());
+        session.setAttribute("info", response);
+        return ApiResponse.success("로그인 성공", response);
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    @PostMapping("/logout")
+    public ApiResponse<Boolean> logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/members/login";
+        return ApiResponse.success("로그아웃 성공", true);
     }
 
-    @ResponseBody
     @GetMapping("/id-check")
-    public boolean idCheck(@RequestParam("studentId") String studentId) {
-        return memberService.getIdCheck(studentId);
+    public ApiResponse<Boolean> idCheck(@RequestParam("studentId") String studentId) {
+        boolean isDuplicate = memberService.getIdCheck(studentId);
+        return ApiResponse.success(isDuplicate ? "이미 사용중인 아이디입니다." : "사용 가능한 아이디입니다.", isDuplicate);
     }
 }

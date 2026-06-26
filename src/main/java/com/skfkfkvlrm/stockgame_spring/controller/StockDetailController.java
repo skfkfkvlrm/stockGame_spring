@@ -1,41 +1,31 @@
 package com.skfkfkvlrm.stockgame_spring.controller;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.ApiResponse;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockDetailResponse;
 import com.skfkfkvlrm.stockgame_spring.service.StockDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-@Controller
-@RequestMapping("/stock")
+@RestController
+@RequestMapping("/api/stock")
 @RequiredArgsConstructor
 public class StockDetailController {
     private final StockDetailService stockDetailService;
 
-    // 주식 상세 페이지 진입
     @GetMapping("/{stockId}")
-    public String getStockDetail(@PathVariable("stockId") int stockId,
-            @SessionAttribute(name = "studentId", required = false) String studentId, Model model) {
+    public ApiResponse<StockDetailResponse> getStockDetail(
+            @PathVariable("stockId") int stockId,
+            @SessionAttribute(name = "studentId", required = false) String studentId) {
+        
         if (studentId == null) {
-            return "redirect:/login";
+            return ApiResponse.error("로그인이 필요합니다.");
         }
-
-        try {
-            StockDetailResponse detailInfo = stockDetailService.getStockDetailInfo(stockId);
-            model.addAttribute("stock", detailInfo);
-            model.addAttribute("stockName", detailInfo.getStockName());
-            model.addAttribute("content", detailInfo.getContent());
-            model.addAttribute("nowPrice", detailInfo.getNowPrice());
-            model.addAttribute("prevPrice", detailInfo.getPrevPrice());
-            model.addAttribute("pubPrice", detailInfo.getPubPrice());
-            model.addAttribute("pubAmount", detailInfo.getPubAmount());
-        } catch (IllegalArgumentException e) {
-            return "redirect:/asset/";
-        }
-        return "view/StockDetail";
+        
+        StockDetailResponse response = stockDetailService.getStockDetailInfo(stockId);
+        return ApiResponse.success("Stock details", response);
     }
 }

@@ -1,28 +1,22 @@
 package com.skfkfkvlrm.stockgame_spring.controller;
 
-import com.skfkfkvlrm.stockgame_spring.controller.dto.response.PointHistoryResponse;
-import com.skfkfkvlrm.stockgame_spring.service.MyPointHistoryService;
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import java.util.List;
-
-@Controller
+@RestController
+@RequestMapping("/api/history")
 @RequiredArgsConstructor
 public class MyPointHistoryController {
-    private final MyPointHistoryService myPointHistoryService;
 
-    @GetMapping("/history")
-    public String getMyPointHistory(@SessionAttribute(name = "studentId", required = false) String studentId,
-            Model model) {
+    @GetMapping("/")
+    public ApiResponse<String> getHistory(@SessionAttribute(name = "studentId", required = false) String studentId) {
         if (studentId == null) {
-            return "redirect:/login";
+            return ApiResponse.error("로그인이 필요합니다.");
         }
-        List<PointHistoryResponse> historyList = myPointHistoryService.getMyPointHistoryList(studentId);
-        model.addAttribute("historyList", historyList);
-        return "MyPointHistory";
+        return ApiResponse.success("Point history data", "TODO: 포인트 내역 데이터");
     }
 }

@@ -82,9 +82,16 @@ public interface StockDetailRepository {
     // 매수 주문 요청 매칭
     Map<String, Object> getMatchOrder(int stockId, int orderPrice, int orderAmount, String studentId, OrderStatus content);
 
-    List<Order> getMatchOrderList(StockOrderResponse response);
+    List<Order> getMatchOrderList(@org.apache.ibatis.annotations.Param("stockId") int stockId,
+                                  @org.apache.ibatis.annotations.Param("content") String content,
+                                  @org.apache.ibatis.annotations.Param("orderPrice") int orderPrice,
+                                  @org.apache.ibatis.annotations.Param("studentId") String studentId);
 
     void updateOrder(StockOrderResponse response);
+
+    // 주문 부분체결 시 남은 수량 업데이트
+    boolean updateOrderAmount(@org.apache.ibatis.annotations.Param("amount") int amount,
+                              @org.apache.ibatis.annotations.Param("orderId") int orderId);
 
     //편의성 메서드 추가
     StockOrderResponse getOrderById(int orderId);

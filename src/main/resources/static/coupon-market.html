@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쿠폰 상점</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/Common.css">
+  <link rel="stylesheet" href="/css/SideBar.css">
+  <link rel="stylesheet" href="/css/StockStyle.css">
+  <link rel="stylesheet" href="/css/CouponMarket.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  <div class="app">
+
+    <!-- 왼쪽 콘텐츠 구역 -->
+    <div class="content">
+      <header class="hd">
+        <div class="hd-name">쿠폰 상점</div>
+      </header>
+
+      <div class="main" id="coupon-grid">
+        <!-- JS(coupon-market.js)가 쿠폰 목록 API를 호출하여 채움 -->
+        <div class="text-center" id="loading-msg">불러오는 중...</div>
+      </div>
+    </div>
+
+    <!-- 사이드바 -->
+    <aside class="right-sidebar">
+      <div class="user-info">
+        <a href="/members/logout" class="logout-btn">로그아웃</a>
+        <h2 class="user-name" id="studentName">이름</h2>
+        <p id="studentClassInfo">학년 반 번</p>
+        <p class="point-info" id="studentPoints">보유 포인트 : -P</p>
+      </div>
+
+      <div class="round-box">
+        <p>장 운영중</p>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="menu-button" onclick="location.href='/asset/'">내 자산</button>
+        <button class="menu-button" onclick="location.href='/stock/list'">주식 목록</button>
+        <button class="menu-button" onclick="location.href='/news/'">뉴스 목록</button>
+        <button class="menu-button" onclick="location.href='/history'">내 포인트 내역</button>
+        <button class="menu-button active" onclick="location.href='/coupons/'">쿠폰 상점</button>
+      </nav>
+    </aside>
+
+  </div>
+
+  <!-- 구매 결과 메시지 표시 영역 (JS가 alert 또는 toast로 처리) -->
+  <div id="flash-message" style="display:none;"></div>
+
+  <script src="/js/coupon-market.js"></script>
+</body>
+</html>

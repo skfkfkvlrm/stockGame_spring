@@ -119,4 +119,9 @@
 		    state = #{state}
 		WHERE order_id = #{orderId}
 	</update>
+	<update id="updateOrderAmount">
+		UPDATE orders
+		SET amount = amount - #{amount}
+		WHERE order_id = #{orderId}
+	</update>
 </mapper>
