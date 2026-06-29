@@ -77,3 +77,40 @@
 > 치명적 결함 해소(0단계), 부분 체결 엔진 도입(2단계), 이중 보안 체계 구축(1,3단계)에 이어, **백엔드의 순수 REST API 서버 전환 및 에러 핸들링 구조화(4단계)**까지 모두 성공적으로 마무리되었습니다!
 > 
 > 다음은 트랙 A의 5단계(거래 기록 고도화)를 진행할 수도 있지만, 우선은 백엔드가 완벽히 준비되었으므로 대기 중인 **React 마이그레이션(트랙 B)**을 시작하여 화면을 연동해보는 것을 강력히 추천합니다!
+
+---
+
+## 📈 5단계 (완료): 거래 기록 고도화 (OHLCV) 및 스케줄러 도입
+차트 렌더링 및 통계 데이터를 위한 가격 기록 고도화를 완료했습니다.
+
+1. **OHLCV 데이터베이스 구축**
+   - `stock_price_history` 테이블 추가 및 `StockPriceHistory` 엔티티 생성.
+   - 일자별 시가(Open), 고가(High), 저가(Low), 종가(Close), 거래량(Volume) 저장.
+2. **매칭 엔진 시점 데이터 갱신 연동**
+   - `StockOrderServiceImpl` 부분 체결 엔진에 `stockPriceHistoryMapper.upsertDailyPrice` 연동.
+   - MariaDB의 `ON DUPLICATE KEY UPDATE` 문법을 활용해 거래가 발생할 때마다 실시간으로 고가/저가 판별 및 누적 거래량 업데이트.
+3. **자동 기준가 갱신 스케줄러 (`StockSchedulerService`)**
+   - 매일 자정(`0 0 0 * * *`)에 스케줄러가 작동하여, 이전 날의 최신 종가를 `stocks` 테이블의 `prev_price`에 자동으로 덮어씌움.
+4. **차트 제공 API 추가**
+   - `GET /api/stock/{stockId}/history` 엔드포인트를 열어, 특정 종목의 모든 OHLCV 데이터를 프론트엔드가 그리기 쉬운 배열 포맷으로 응답.
+
+> ✅ **현재 상태**: 백엔드 트랙(A)의 핵심 1~5단계 작업이 모두 완료되었습니다! 이제 프론트엔드 React 마이그레이션을 통해 멋진 차트와 UI를 띄워볼 차례입니다.
+
+---
+
+## 🚦 6단계 (완료): UX 및 추가 기능 (WebSocket & 시장 정책)
+현실 주식 시장과 유사한 사용자 경험 제공을 위해 웹소켓 기반 실시간 호가 통신과 시장 운영 정책을 백엔드에 반영했습니다.
+
+1. **WebSocket (STOMP) 기반 실시간 브로드캐스트 적용**
+   - `spring-boot-starter-websocket` 추가 및 `WebSocketConfig` 작성 (엔드포인트: `/ws`).
+   - 주문 및 체결이 발생할 때마다 `SimpMessagingTemplate`을 통해 `/topic/orders/{stockId}`로 호가 갱신 메시지 브로드캐스팅.
+   - 부분 체결 및 전량 체결 시 해당 사용자 개인 큐(`/queue/notifications`)로 알림 발송 로직 추가.
+2. **호가 단위 (Tick Size) 강제 로직 추가**
+   - 코스피 시장 호가 단위표를 참고하여 가격대별 입력 단위(1, 5, 10, 50, 100원 등)를 검증(`validateTickSize`).
+   - 잘못된 호가 입력 시 `IllegalArgumentException` 발생 (Rest API 핸들러로 자동 감지).
+3. **시장 제어 도메인 추가 및 운영 상태 통제**
+   - `MarketSettings` JPA 엔티티를 추가하여 관리자가 시장 개/폐장 여부 제어 가능.
+   - `AdminApiController`에 시장 상태 조회(`GET /api/admin/market/status`) 및 토글(`POST /api/admin/market/toggle`) API 구현.
+   - `StockOrderServiceImpl` 핵심 로직 진입 전에 시장 폐장 상태일 경우 주문 접수 즉시 차단(`IllegalStateException`).
+
+> ✅ **현재 상태**: 6단계를 끝으로 **백엔드 트랙(A)이 모두 완료(100%)**되었습니다! 아키텍처 개편, 성능 및 안전성 향상, 비즈니스 디테일까지 완벽히 구축되었으며, 이제 프론트엔드 React 프로젝트 생성 및 연동(트랙 B)만 남았습니다.

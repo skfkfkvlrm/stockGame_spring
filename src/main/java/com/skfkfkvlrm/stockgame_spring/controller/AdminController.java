@@ -1,8 +1,12 @@
 package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.ApiResponse;
+import com.skfkfkvlrm.stockgame_spring.domain.MarketSettings;
+import com.skfkfkvlrm.stockgame_spring.repository.MarketSettingsRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,7 +15,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminController {
+
+    private final MarketSettingsRepository marketSettingsRepository;
 
     @GetMapping("/dashboard")
     public ApiResponse<Map<String, String>> dashboard(Authentication authentication) {
@@ -37,5 +44,28 @@ public class AdminController {
     @GetMapping("/coupons")
     public ApiResponse<String> coupons() {
         return ApiResponse.success("Coupon list", "TODO: 쿠폰 목록 데이터");
+    }
+
+    @GetMapping("/market/status")
+    public ApiResponse<Map<String, Object>> getMarketStatus() {
+        MarketSettings settings = marketSettingsRepository.findById(1).orElse(null);
+        Map<String, Object> data = new HashMap<>();
+        data.put("marketOpen", settings != null && settings.isMarketOpen());
+        return ApiResponse.success("Market status", data);
+    }
+
+    @PostMapping("/market/toggle")
+    public ApiResponse<Map<String, Object>> toggleMarketStatus() {
+        MarketSettings settings = marketSettingsRepository.findById(1).orElse(null);
+        if (settings == null) {
+            settings = MarketSettings.builder().id(1).marketOpen(true).dailyTradeLimit(0).build();
+        } else {
+            settings.setMarketOpen(!settings.isMarketOpen());
+        }
+        marketSettingsRepository.save(settings);
+        
+        Map<String, Object> data = new HashMap<>();
+        data.put("marketOpen", settings.isMarketOpen());
+        return ApiResponse.success("Market status toggled", data);
     }
 }

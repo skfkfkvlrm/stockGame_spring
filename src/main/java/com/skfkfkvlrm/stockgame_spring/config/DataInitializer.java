@@ -1,8 +1,10 @@
 package com.skfkfkvlrm.stockgame_spring.config;
 
 import com.skfkfkvlrm.stockgame_spring.domain.AppUser;
+import com.skfkfkvlrm.stockgame_spring.domain.MarketSettings;
 import com.skfkfkvlrm.stockgame_spring.domain.Role;
 import com.skfkfkvlrm.stockgame_spring.repository.AppUserRepository;
+import com.skfkfkvlrm.stockgame_spring.repository.MarketSettingsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -23,12 +25,14 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements ApplicationRunner {
 
     private final AppUserRepository appUserRepository;
+    private final MarketSettingsRepository marketSettingsRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) {
         createDefaultAdminIfAbsent();
         createDefaultManagerIfAbsent();
+        createDefaultMarketSettingsIfAbsent();
     }
 
     private void createDefaultAdminIfAbsent() {
@@ -56,6 +60,18 @@ public class DataInitializer implements ApplicationRunner {
             log.info("[DataInitializer] MANAGER 초기 계정 생성 완료 (username: manager)");
         } else {
             log.debug("[DataInitializer] MANAGER 계정이 이미 존재합니다.");
+        }
+    }
+
+    private void createDefaultMarketSettingsIfAbsent() {
+        if (!marketSettingsRepository.existsById(1)) {
+            MarketSettings settings = MarketSettings.builder()
+                    .id(1)
+                    .marketOpen(true) // 기본적으로 개장 상태
+                    .dailyTradeLimit(0) // 0은 무제한
+                    .build();
+            marketSettingsRepository.save(settings);
+            log.info("[DataInitializer] MarketSettings 기본 설정 생성 완료 (marketOpen: true)");
         }
     }
 }
