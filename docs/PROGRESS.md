@@ -44,6 +44,9 @@
 3. **포인트 내역 화면 크래시 해결**: `PointsHistory.jsx` 데이터 빈 값 반환 시 옵셔널 체이닝 보호 구문 추가
 4. **대시보드 에셋 페이지 UI 리워크**: 라벨 변경(총 자산, 보유 포인트, 총 손익, 보유 쿠폰) 및 클릭 이벤트 연동
 5. **보유 쿠폰(My Coupons) 기능 신설**: 프론트엔드 `MyCoupons.jsx` 화면 개발 및 백엔드 `/api/coupons/my` 엔드포인트 구현 완료
+6. **주식 상세 페이지 UI 및 로직 복구**: API 필드명 불일치(`currentPrice` -> `nowPrice`) 해결 및 React Uncontrolled input 경고 수정
+7. **프론트 내비게이션 복구**: 주식 목록(`StockList`)의 각 행(Row) 클릭 시 `useNavigate`를 통한 상세 페이지 진입 기능 완비
+8. **백엔드 쿠폰 및 거래 엔티티 구조 개선**: `CouponPurchase` 등 핵심 엔티티 누락 매핑(학생ID, 쿠폰ID 등) 복구 완료
 
 ### 🔗 관련 리포지토리
 - 백엔드: [stockGame_spring](https://github.com/skfkfkvlrm/stockGame_spring) — `feature/react-migration` 브랜치
