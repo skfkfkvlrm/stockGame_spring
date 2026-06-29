@@ -31,7 +31,7 @@
                     '매수' AS history_type, 
                     s.name AS history_content, 
                     -(o.price * o.amount) AS point_change 
-                FROM transactions t
+                FROM stock_transactions t
                 JOIN orders o ON t.buy_order_id = o.order_id
                 JOIN stocks s ON o.stock_id = s.stock_id
                 WHERE o.student_id = (SELECT id FROM students WHERE student_id = #{studentId})
@@ -43,7 +43,7 @@
                     '매도' AS history_type, 
                     s.name AS history_content, 
                     (o.price * o.amount) AS point_change 
-                FROM transactions t
+                FROM stock_transactions t
                 JOIN orders o ON t.sell_order_id = o.order_id
                 JOIN stocks s ON o.stock_id = s.stock_id
                 WHERE o.student_id = (SELECT id FROM students WHERE student_id = #{studentId})

@@ -81,9 +81,9 @@ public class StockOrderServiceImpl implements StockOrderService {
                 return "발행 가격(" + pubPrice + ")보다 낮은 가격으로 매수할 수 없습니다.";
             }
 
-            Order order = createOrder(request, OrderStatus.매도, OrderStatus.체결);
+            Order order = createOrder(request, OrderStatus.매수, OrderStatus.체결);
             stockDetailRepository.insertOrder(order);
-            stockDetailRepository.setMatchedOrder(order.getOrderId(), null);
+            stockDetailRepository.setMatchedOrder(order.getOrderId(), null, request.getAmount(), request.getPrice());
             stockDetailRepository.setStockPubBalance(request.getAmount(), request.getStockId());
             stockDetailRepository.setStudentPointDown(totalOrderPrice, request.getStudentId());
 
@@ -129,7 +129,7 @@ public class StockOrderServiceImpl implements StockOrderService {
             int buyOrderId = buyFilled.getOrderId();
 
             // 거래내역 및 포인트 정산
-            stockDetailRepository.setMatchedOrder(buyOrderId, sellOrderId);
+            stockDetailRepository.setMatchedOrder(buyOrderId, sellOrderId, matchAmount, matchPrice);
             stockDetailRepository.setStudentPointDown(matchTotalPrice, request.getStudentId());
             stockDetailRepository.setStudentPointUp(matchTotalPrice, sellOrder.getStudentId());
 
@@ -215,7 +215,7 @@ public class StockOrderServiceImpl implements StockOrderService {
             int sellOrderId = sellFilled.getOrderId();
 
             // 거래내역 및 포인트 정산
-            stockDetailRepository.setMatchedOrder(buyOrderId, sellOrderId);
+            stockDetailRepository.setMatchedOrder(buyOrderId, sellOrderId, matchAmount, matchPrice);
             stockDetailRepository.setStudentPointUp(matchTotalPrice, request.getStudentId());
 
             stockPriceHistoryRepository.upsertDailyPrice(request.getStockId(), LocalDate.now(), matchPrice, matchAmount);

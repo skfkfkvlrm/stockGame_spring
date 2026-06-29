@@ -19,6 +19,7 @@
 
 ### 📌 향후 계획
 - 백엔드 자체적인 메인 로드맵은 모두 종료되었습니다.
+- 최근 발견된 잔여 결함(트랜잭션 기록 무결성 및 ddl-auto 문제)에 대한 패치 및 컴파일 검증을 성공적으로 마쳤습니다 (참고: `backend_phase7_cleanup.md`, `backend_phase7_test_result.md`).
 - 향후 프론트엔드(`stockGame_react`) 개발이 진행됨에 따라 추가적으로 필요한 데이터 필드나 API 수정 요청이 발생할 경우 대응하는 유지보수 형태로 진행될 예정입니다.
 
 ---
@@ -35,15 +36,16 @@
 5. **뉴스** — `NewsList.jsx` (`/api/news` 연동, 문자열 목록 렌더링 수정)
 6. **포인트 내역** — `PointsHistory.jsx` (`/api/history` 연동)
 7. **쿠폰 상점** — `CouponStore.jsx` (`/api/coupons` 연동 및 렌더링 안정화)
-8. **더미 데이터** — `DataInitializer`로 초기 시드 데이터 (학생, 주식, 뉴스, 쿠폰) 자동 삽입
+8. **더미 데이터** — `DataInitializer`로 초기 시드 데이터 (학생, 주식, 뉴스, 문폰) 자동 삽입
+
+### ✅ 완료된 작업 (추가 버그 픽스 및 UI 고도화)
+1. **주식 목록 데이터 500 오류 해결**: `Transaction` 엔티티 매핑 문제(`transactions` -> `stock_transactions`) 수정 및 쿼리 복구 완료
+2. **리스트 중복 출력 버그 해결**: `DataInitializer`에 `INSERT IGNORE` 및 `COUNT(*)` 검사 추가, DB 중복 내역 청소 완료
+3. **포인트 내역 화면 크래시 해결**: `PointsHistory.jsx` 데이터 빈 값 반환 시 옵셔널 체이닝 보호 구문 추가
+4. **대시보드 에셋 페이지 UI 리워크**: 라벨 변경(총 자산, 보유 포인트, 총 손익, 보유 쿠폰) 및 클릭 이벤트 연동
+5. **보유 쿠폰(My Coupons) 기능 신설**: 프론트엔드 `MyCoupons.jsx` 화면 개발 및 백엔드 `/api/coupons/my` 엔드포인트 구현 완료
 
 ### 🔗 관련 리포지토리
 - 백엔드: [stockGame_spring](https://github.com/skfkfkvlrm/stockGame_spring) — `feature/react-migration` 브랜치
 - 프론트엔드: [stockGame_react](https://github.com/skfkfkvlrm/stockGame_react) — `feature/react-migration` 브랜치
-
-### 📋 알려진 이슈 (미완료)
-- `Transaction` 엔티티에 `amount`, `price` 필드 누락 → 부분체결 기록 불완전
-- `StockDetail.jsx` WebSocket cleanup 누락 → 연결 누수 위험
-- `vite.config.js` Proxy 미설정 → `baseURL` 하드코딩 상태
-- 학생 비밀번호 평문 저장 → BCrypt 적용 필요
 

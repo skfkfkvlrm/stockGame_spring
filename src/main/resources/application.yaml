@@ -8,7 +8,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:3306/mydb
+    url: jdbc:mariadb://127.0.0.1:3307/mydb
     username: mydbid
     password: mydbpw
   jpa:
@@ -16,7 +16,7 @@ spring:
     generate-ddl: true
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true

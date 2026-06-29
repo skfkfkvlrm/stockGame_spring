@@ -68,7 +68,10 @@ public interface StockDetailRepository {
     boolean setStockPubBalance(int buyAmount, int stockId);
 
     // 주문 요청 완료
-    boolean setMatchedOrder(int buyOrderId, Integer sellOrderId);
+    boolean setMatchedOrder(@org.apache.ibatis.annotations.Param("buyOrderId") int buyOrderId, 
+                            @org.apache.ibatis.annotations.Param("sellOrderId") Integer sellOrderId,
+                            @org.apache.ibatis.annotations.Param("amount") int amount,
+                            @org.apache.ibatis.annotations.Param("price") int price);
 
     // 주문 요청 상태 '대기'변경
     boolean setOrderStatePending(int orderId);

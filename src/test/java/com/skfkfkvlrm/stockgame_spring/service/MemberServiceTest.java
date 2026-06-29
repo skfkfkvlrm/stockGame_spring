@@ -74,9 +74,8 @@ public class MemberServiceTest {
                 .studentId("testUser123")
                 .password("wrongPassword")
                 .build();
-        //When
-        StudentResponse response = memberService.login(loginRequest);
-        //Then
-        assertNull(response, "로그인 실패");
+        //When & Then
+        assertThrows(com.skfkfkvlrm.stockgame_spring.exception.InvalidCredentialsException.class,
+                () -> memberService.login(loginRequest), "로그인 실패 예외 발생");
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@org.springframework.transaction.annotation.Transactional
 public class MyAssetRepositoryTest {
     @Autowired
     private MyAssetRepository myAssetRepository;
@@ -41,13 +42,20 @@ public class MyAssetRepositoryTest {
 
     @Test
     void testSelectUserStock_보유주식_조회() {
+        // Given
+        // When
+        java.util.List<Integer> stockNos = myAssetRepository.getMyStockNos("testUser", com.skfkfkvlrm.stockgame_spring.domain.OrderStatus.체결);
+        // Then
+        assertNotNull(stockNos);
+        assertTrue(stockNos.isEmpty());
     }
 
     @Test
-    void testUpdateUserPoint_포인트_차감_및_증가() {
-    }
-
-    @Test
-    void testUpdateUserStock_주식_차감_및_증가() {
+    void testGetTotalCoupon_쿠폰조회() {
+        // Given
+        // When
+        Integer totalCoupon = myAssetRepository.getTotalCoupon("testUser");
+        // Then
+        assertNotNull(totalCoupon);
     }
 }

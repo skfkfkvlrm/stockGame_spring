@@ -12,10 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "get_points")
 public class GetPoint {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int getPointId;
+    private int studentId;
     private String content;
     private int point;
     @CreationTimestamp

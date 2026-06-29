@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -15,12 +17,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "stock_transactions")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int transactionId;
     @CreationTimestamp
     private LocalDateTime createdDate;
-    private int sellOrderNo;
-    private int buyOrderNo;
+    @Column(name = "sell_order_id")
+    private int sellOrderId;
+    @Column(name = "buy_order_id")
+    private int buyOrderId;
+    private int amount;
+    private int price;
 }

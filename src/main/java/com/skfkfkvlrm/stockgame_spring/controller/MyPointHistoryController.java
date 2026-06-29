@@ -7,16 +7,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.skfkfkvlrm.stockgame_spring.controller.dto.response.PointHistoryResponse;
+import com.skfkfkvlrm.stockgame_spring.repository.MyPointHistoryRepository;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/history")
 @RequiredArgsConstructor
 public class MyPointHistoryController {
 
-    @GetMapping("/")
-    public ApiResponse<String> getHistory(@SessionAttribute(name = "studentId", required = false) String studentId) {
+    private final MyPointHistoryRepository myPointHistoryRepository;
+
+    @GetMapping({"", "/"})
+    public ApiResponse<List<PointHistoryResponse>> getHistory(@SessionAttribute(name = "studentId", required = false) String studentId) {
         if (studentId == null) {
             return ApiResponse.error("로그인이 필요합니다.");
         }
-        return ApiResponse.success("Point history data", "TODO: 포인트 내역 데이터");
+        List<PointHistoryResponse> history = myPointHistoryRepository.getMyPointHistoryList(studentId);
+        return ApiResponse.success("Point history data", history);
     }
 }

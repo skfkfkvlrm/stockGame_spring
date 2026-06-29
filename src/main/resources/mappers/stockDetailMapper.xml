@@ -6,14 +6,14 @@
 	</select>
 	<select id="getStockPrice" parameterType="int" resultType="int">
 		SELECT COALESCE(
-					   (SELECT o.price FROM transactions t
+					   (SELECT o.price FROM stock_transactions t
 												JOIN orders o ON t.buy_order_id = o.order_id WHERE o.stock_id = #{stockId}
 				        ORDER BY t.created_date DESC LIMIT 1),
 				       (SELECT publication_price FROM stocks WHERE stock_id = #{stockId})
 		       )
 	</select>
 	<select id="getStockPriceChange" parameterType="int" resultType="int">
-		SELECT COALESCE((SELECT o.price FROM transactions t JOIN orders o ON t.buy_order_id = o.order_id WHERE o.stock_id = #{stockId} ORDER BY t.created_date DESC LIMIT 1), s.publication_price) - s.prev_price
+		SELECT COALESCE((SELECT o.price FROM stock_transactions t JOIN orders o ON t.buy_order_id = o.order_id WHERE o.stock_id = #{stockId} ORDER BY t.created_date DESC LIMIT 1), s.publication_price) - s.prev_price
 		FROM stocks s WHERE s.stock_id = #{stockId}
 	</select>
 	<select id="getChangeRate" parameterType="int" resultType="double">
@@ -21,7 +21,7 @@
 					   ROUND(
 							   (COALESCE(
 										(SELECT o.price
-										 FROM transactions t
+										 FROM stock_transactions t
 										     JOIN orders o ON t.buy_order_id = o.order_id
 										 WHERE o.stock_id = #{stockId}
 										 ORDER BY t.created_date DESC LIMIT 1),
@@ -66,8 +66,8 @@
 		UPDATE students SET total_point = total_point - #{totalPrice} WHERE student_id = #{studentId}
 	</update>
 	<insert id="setMatchedOrder">
-		INSERT INTO transactions (created_date, buy_order_id, sell_order_id)
-		VALUES (NOW(), #{buyOrderId}, #{sellOrderId})
+		INSERT INTO stock_transactions (created_date, buy_order_id, sell_order_id, amount, price)
+		VALUES (NOW(), #{buyOrderId}, #{sellOrderId}, #{amount}, #{price})
 	</insert>
 	<update id="setOrderStatePending" parameterType="int">
 		UPDATE orders SET state = '대기' WHERE order_id = #{orderId}

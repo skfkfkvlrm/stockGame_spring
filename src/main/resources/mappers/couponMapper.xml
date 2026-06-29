@@ -26,7 +26,7 @@
 	
 	<!-- 나의 보유 쿠폰 조회 -->
 	<select id="getMyCouponList" parameterType="String" resultType="com.skfkfkvlrm.stockgame_spring.domain.CouponPurchase">
-		SELECT cp.name, cp.price
+		SELECT cp.name, cp.price, cp.state, cp.created_date as createdDate
 		FROM coupon_purchase cp 
 		INNER JOIN coupons c ON cp.coupon_id = c.coupon_id
 		WHERE cp.student_id = (SELECT id FROM students WHERE student_id = #{studentId})

@@ -18,6 +18,8 @@ public class CouponPurchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int couponPurchaseId;
+    private int studentId;
+    private int couponId;
     private int price;
     private String name;
     private CouponPurchaseStatus state;
