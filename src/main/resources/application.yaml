@@ -5,11 +5,7 @@ spring:
 #    user:
 #      name: admin
 #      password: 1234
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-    cache: false
-    check-template-location: true
+
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/mydb
@@ -25,10 +21,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-  mvc:
-    view:
-      prefix: /WEB-INF/view/
-      suffix: .html
+
 mybatis:
   mapper-locations: classpath:mappers/**/*.xml
   configuration:

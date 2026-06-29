@@ -19,6 +19,12 @@ public class StockDetailController {
     private final StockDetailService stockDetailService;
     private final StockPriceHistoryRepository stockPriceHistoryRepository;
 
+    @GetMapping("")
+    public ApiResponse<java.util.List<StockDetailResponse>> getStockList() {
+        java.util.List<StockDetailResponse> list = stockDetailService.getAllStocks();
+        return ApiResponse.success("Stock list", list);
+    }
+
     @GetMapping("/{stockId}")
     public ApiResponse<StockDetailResponse> getStockDetail(
             @PathVariable("stockId") int stockId,

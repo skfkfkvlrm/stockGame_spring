@@ -11,12 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.skfkfkvlrm.stockgame_spring.repository.StockListRepository;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StockDetailServiceImpl implements StockDetailService {
     private final StockDetailRepository stockDetailRepository;
+    private final StockListRepository stockListRepository;
 
     // 1. 주식 기본 정보 조회
     @Override
@@ -71,5 +75,12 @@ public class StockDetailServiceImpl implements StockDetailService {
     public List<Order> getwaitingOrderList(int stockId, String studentId) {
         List<Order> myOrders = stockDetailRepository.getTotalMyOrder(stockId, studentId);
         return myOrders != null ? myOrders : Collections.emptyList();
+    }
+
+    @Override
+    public List<StockDetailResponse> getAllStocks() {
+        return stockListRepository.getStockNameList().stream()
+                .map(stock -> getStockDetailInfo(stock.getStockId()))
+                .collect(Collectors.toList());
     }
 }
