@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,12 +28,14 @@ public class DataInitializer implements ApplicationRunner {
     private final AppUserRepository appUserRepository;
     private final MarketSettingsRepository marketSettingsRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(ApplicationArguments args) {
         createDefaultAdminIfAbsent();
         createDefaultManagerIfAbsent();
         createDefaultMarketSettingsIfAbsent();
+        createDummyDataIfEmpty();
     }
 
     private void createDefaultAdminIfAbsent() {
@@ -72,6 +75,49 @@ public class DataInitializer implements ApplicationRunner {
                     .build();
             marketSettingsRepository.save(settings);
             log.info("[DataInitializer] MarketSettings 기본 설정 생성 완료 (marketOpen: true)");
+        }
+    }
+
+    private void createDummyDataIfEmpty() {
+        try {
+            log.info("[DataInitializer] 1차 스프린트 더미 데이터를 삽입합니다 (강제 실행)...");
+
+            try {
+                jdbcTemplate.execute("ALTER TABLE coupons DROP COLUMN student_id");
+            } catch (Exception e) {
+                // Ignore if column does not exist
+            }
+
+                // Students
+                jdbcTemplate.update("INSERT IGNORE INTO students (student_id, password, name, grade, class_name, class_number, register_year, total_coupon, total_point, created_date) VALUES " +
+                        "('abc', 'abc123!', '홍길동', 5, '4', 63, 2026, 0, 30000, NOW()), " +
+                        "('def', 'def123!', '이순신', 5, '4', 9, 2026, 0, 30000, NOW()), " +
+                        "('dldlsghk123', 'dldlsghk123!', '이인환', 6, '가', 63, 2026, 0, 8000, NOW())");
+
+                // Stocks
+                jdbcTemplate.update("INSERT IGNORE INTO stocks (name, content, publication_balance, publication_price, prev_price, created_date) VALUES " +
+                        "('새콤달콤', '화가나고 피곤할 땐 새콤달콤', 10, 800, 800, NOW()), " +
+                        "('PC방', '친구들과 함께 발로란트 한 판?', 100, 2000, 2000, NOW()), " +
+                        "('SM', '에스파 짱', 100, 4000, 4000, NOW())");
+
+                // Coupons
+                jdbcTemplate.update("INSERT INTO coupons (name, price, created_date) VALUES " +
+                        "('자리 교환권', 500, NOW()), " +
+                        "('청소당번 면제', 3000, NOW()), " +
+                        "('자리 뺏기', 100000, NOW()), " +
+                        "('안마 쿠폰', 1000, NOW())");
+
+                // News
+                jdbcTemplate.update("INSERT INTO news (content, created_date) VALUES " +
+                        "('새콤달콤 희귀템 추가 입고 예정입니다.', NOW()), " +
+                        "('에스파 슈퍼노바로 컴백 무대, 화제 만발입니다.', NOW()), " +
+                        "('청소당번 면제권, 품귀 현상으로 가격 폭등 중입니다.', NOW()), " +
+                        "('SM 신인 아티스트 데뷔 예고, 기대감이 고조되고 있습니다.', NOW()), " +
+                        "('최신 게임 출시 임박에 PC 방, 만석 행렬입니다.', NOW())");
+
+                log.info("[DataInitializer] 더미 데이터 삽입 완료!");
+        } catch (Exception e) {
+            log.warn("[DataInitializer] 더미 데이터 삽입 중 오류 발생 (테이블이 없거나 매핑 오류일 수 있습니다): {}", e.getMessage());
         }
     }
 }
