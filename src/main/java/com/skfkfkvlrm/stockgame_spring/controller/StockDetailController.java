@@ -2,6 +2,8 @@ package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.ApiResponse;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockDetailResponse;
+import com.skfkfkvlrm.stockgame_spring.domain.StockPriceHistory;
+import com.skfkfkvlrm.stockgame_spring.repository.StockPriceHistoryRepository;
 import com.skfkfkvlrm.stockgame_spring.service.StockDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequiredArgsConstructor
 public class StockDetailController {
     private final StockDetailService stockDetailService;
+    private final StockPriceHistoryRepository stockPriceHistoryRepository;
 
     @GetMapping("/{stockId}")
     public ApiResponse<StockDetailResponse> getStockDetail(
@@ -27,5 +30,12 @@ public class StockDetailController {
         
         StockDetailResponse response = stockDetailService.getStockDetailInfo(stockId);
         return ApiResponse.success("Stock details", response);
+    }
+
+    @GetMapping("/{stockId}/history")
+    public ApiResponse<java.util.List<StockPriceHistory>> getStockHistory(
+            @PathVariable("stockId") int stockId) {
+        java.util.List<StockPriceHistory> history = stockPriceHistoryRepository.findHistoryByStockId(stockId);
+        return ApiResponse.success("Stock price history", history);
     }
 }

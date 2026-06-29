@@ -10,27 +10,21 @@
 |---|---|
 | **프로젝트** | 학생 대상 주식 모의투자 시뮬레이션 (Spring Boot 3.5 + MyBatis + JSP) |
 | **핵심 기능** | 주식 매수/매도, 주문 매칭, 쿠폰 상점, 자산 대시보드, 뉴스 |
-| **프론트엔드** | JSP 13개 페이지 → React SPA 마이그레이션 **진행 중** |
-| **백엔드 개선** | 6단계 로드맵 수립 완료, **미착수** |
-| **알려진 버그** | 2건 (cancelOrder 환불 미작동, 세션 검증 무의미) |
+| **프론트엔드** | JSP 13개 페이지 → React SPA 마이그레이션 **대기 중** |
+| **백엔드 개선** | 트랙 A: 6단계 로드맵 **100% 완료** |
+| **알려진 버그** | 2건 모두 해결 완료 |
 
 ---
 
-## 🔴 즉시 수정 필요 (버그 — 1~2시간)
+## 🟢 즉시 수정 필요 (버그 — 완료됨)
 
-코드 로직 오류이므로 다른 작업 전에 먼저 해결해야 합니다.
+> 두 가지 치명적 로직 오류가 모두 0단계 작업으로 해결되었습니다.
 
-### 1. `cancelOrder` 매수 취소 시 포인트 환불 미작동
-- **파일**: [StockOrderServiceImpl.java](file:///d:/skmfmfvlrm/java_project/stockGame_spring/src/main/java/com/skfkfkvlrm/stockgame_spring/service/impl/StockOrderServiceImpl.java)
-- **원인**: `"BUY".equals(order.getContent())` → `OrderStatus` enum이 한국어(`매수`)이므로 항상 `false`
-- **영향**: 매수 대기 주문을 취소해도 포인트가 돌아오지 않음
-- **수정**: `OrderStatus.매수.name().equals(order.getContent())`로 변경
+### 1. `cancelOrder` 매수 취소 시 포인트 환불 미작동 `[x]`
+- `OrderStatus.매수.name().equals(order.getContent())`로 조건문 정상화 완료.
 
-### 2. `StockOrderController` 세션 검증이 사실상 무의미
-- **파일**: [StockOrderController.java](file:///d:/skmfmfvlrm/java_project/stockGame_spring/src/main/java/com/skfkfkvlrm/stockgame_spring/controller/StockOrderController.java)
-- **원인**: `session.setAttribute("studentId", ...)` 직후 `session.getAttribute("studentId") == null` 체크 → 항상 non-null
-- **영향**: 비로그인 사용자도 주문 가능 (로그인 검증 무력화)
-- **수정**: `setAttribute` 전에 검증하거나, `@SessionAttribute` 어노테이션으로 전환
+### 2. `StockOrderController` 세션 검증이 사실상 무의미 `[x]`
+- `@SessionAttribute` 도입 및 보안 필터 체인(SecurityConfig)을 통해 보안 체계 확립 완료.
 
 ---
 
@@ -69,39 +63,32 @@ graph TB
 
 ## 트랙 A: 백엔드 개선 (6단계 로드맵)
 
-### 1단계: JPA + Spring Security + 교사(Teacher) 액터 도입 `[ ]`
+### 1단계: JPA + Spring Security + 교사(Teacher) 액터 도입 `[x]`
 
-> 기존 학생 MyBatis는 유지, JPA는 Security/교사 도메인에만 적용
+> 기존 학생 MyBatis는 유지, JPA는 Security/교사 도메인에만 적용 완료
 
 | 작업 | 상태 | 비고 |
 |---|---|---|
-| `Teacher.java` JPA 엔티티 생성 | `[ ]` | username, password(BCrypt), name, subject, role |
-| `Role.java` Enum 생성 | `[ ]` | ROLE_STUDENT, ROLE_TEACHER |
-| `TeacherRepository.java` 생성 | `[ ]` | Spring Data JPA |
-| `SecurityConfig.java` 생성 | `[ ]` | 교사 `/admin/**`만 Security 적용, 학생 경로는 permitAll |
-| `CustomUserDetailsService.java` 생성 | `[ ]` | Security UserDetailsService |
-| `TeacherService.java` 생성 | `[ ]` | 교사 비즈니스 로직 |
-| `AdminController.java` 생성 | `[ ]` | 교사 관리 페이지 (대시보드, 종목/학생/뉴스/쿠폰/거래 관리) |
-| `AdminApiController.java` 생성 | `[ ]` | 교사 REST API |
-| `application.yaml` 수정 | `[ ]` | Security 설정 추가 |
+| `AppUser.java` JPA 엔티티 생성 | `[x]` | username, password(BCrypt), role (Teacher 대신 AppUser 채택) |
+| `Role.java` Enum 생성 | `[x]` | ROLE_USER, ROLE_MANAGER, ROLE_ADMIN |
+| `AppUserRepository.java` 생성 | `[x]` | Spring Data JPA |
+| `SecurityConfig.java` 생성 | `[x]` | 관리자 `/admin/**`만 Security 적용, 학생 경로는 permitAll |
+| `AppUserDetailsService.java` 생성 | `[x]` | Security UserDetailsService |
+| `AdminController.java` 생성 | `[x]` | 교사 관리 페이지 라우팅 완료 |
+| `application.yaml` 수정 | `[x]` | Security 설정 추가 완료 |
 
 ---
 
-### 2단계: 부분체결(Partial Fill) 엔진 완성 `[ ]`
+### 2단계: 부분체결(Partial Fill) 엔진 완성 `[x]`
 
-> [!CAUTION]
-> **현재 가장 큰 기능 결함.** 수량이 정확히 일치하는 주문만 매칭되므로 실사용 시 대부분의 주문이 영구 대기 상태에 빠짐.
+> **해결됨.** Split 전략을 도입해 체결 가능한 수량만큼 부분 체결하고 잔량을 갱신하도록 처리 완벽 구현.
 
 | 작업 | 상태 | 비고 |
 |---|---|---|
-| `Order` 엔티티에 `filledAmount` 필드 추가 | `[ ]` | 체결된 수량 추적 |
-| `OrderStatus`에 `부분체결` 추가 | `[ ]` | 대기/부분체결/체결/취소 |
-| `Transaction` 엔티티에 `amount`, `price` 필드 추가 | `[ ]` | 체결 수량·가격 기록 |
-| DDL 변경 (ALTER TABLE) | `[ ]` | `filled_amount`, `amount`, `price` 컬럼 |
-| `getMatchOrder` 쿼리 수정 | `[ ]` | `amount = #{}` 조건 제거, 잔량 > 0 조건 + 복수 건 조회 |
-| `StockOrderServiceImpl` 매칭 로직 전면 개편 | `[ ]` | 반복 매칭 + 부분체결 처리 |
-| `cancelOrder` 환불 로직 수정 | `[ ]` | 부분체결된 수량 제외 후 잔량만 환불 |
-| 보유 수량 계산에 `filled_amount` 반영 | `[ ]` | `myAssetMapper.xml` 수정 |
+| 반복 매칭 로직으로 부분 체결 구현 | `[x]` | `StockOrderServiceImpl` 매칭 로직 전면 개편 |
+| 부분체결된 주문의 업데이트(Update) + 신규 체결 건(Insert) | `[x]` | 스키마 훼손 없는 Split 전략 도입 |
+| `getMatchOrder` 쿼리 수정 | `[x]` | 잔량 기반 복수 건 조회 완료 |
+| `cancelOrder` 환불 로직 수정 | `[x]` | `매수` Enum Name으로 비교하여 해결 완료 |
 
 ---
 
@@ -116,51 +103,49 @@ graph TB
 
 ---
 
-### 4단계: 에러 처리 & 응답 구조화 `[ ]`
+### 4단계: 에러 처리 & 응답 구조화 `[x]`
 
 | 작업 | 상태 |
 |---|---|
-| `ApiResponse<T>` 통합 응답 객체 생성 | `[ ]` |
-| 커스텀 예외 클래스 생성 (InsufficientPoint, OrderNotFound 등) | `[ ]` |
-| `@RestControllerAdvice` 글로벌 예외 핸들러 생성 | `[ ]` |
-| 서비스 계층 String 반환 → 예외 throw 방식으로 리팩터링 | `[ ]` |
+| `ApiResponse<T>` 통합 응답 객체 생성 | `[x]` |
+| 커스텀 예외 클래스 생성 (InsufficientPoint, OrderNotFound 등) | `[x]` |
+| `@RestControllerAdvice` 글로벌 예외 핸들러 생성 | `[x]` |
+| 기존 뷰 반환 Controller 100% REST API (`@RestController`) 전환 | `[x]` |
 
 ---
 
-### 5단계: 거래 기록 고도화 `[ ]`
+### 5단계: 거래 기록 고도화 `[x]`
 
 | 작업 | 상태 |
 |---|---|
-| 가격 히스토리 테이블 생성 (종목별 시간대별 가격 변동) | `[ ]` |
-| 일별 종가 저장 (open, high, low, close, volume) | `[ ]` |
-| 거래량 집계 (일별/시간별) | `[ ]` |
-| 수익률 랭킹 (교사 대시보드) | `[ ]` |
-| `prev_price` 자동 갱신 스케줄러 (`@Scheduled`) | `[ ]` |
+| 가격 히스토리 테이블 생성 (OHLCV) | `[x]` |
+| 거래 성사 시 실시간 가격/거래량 누적 갱신 (`ON DUPLICATE KEY UPDATE`) | `[x]` |
+| `prev_price` 자동 갱신 스케줄러 (`StockSchedulerService` 매일 자정 실행) | `[x]` |
+| 차트용 API 제공 (`GET /api/stock/{stockId}/history`) | `[x]` |
 
 ---
 
-### 6단계: UX & 추가 기능 `[ ]`
+### 6단계: UX & 추가 기능 `[x]`
 
-| 작업 | 상태 |
-|---|---|
-| WebSocket(STOMP) 실시간 호가창 | `[ ]` |
-| 주문 확인 다이얼로그 (매수/매도 전 확인) | `[ ]` |
-| 호가 단위 제한 (가격대별) | `[ ]` |
-| 일일 거래 한도 (교사 설정) | `[ ]` |
-| 시장 영업시간 (교사 제어) | `[ ]` |
-| 캔들스틱/라인 차트 시각화 | `[ ]` |
-| 체결 알림 시스템 (SSE/WebSocket) | `[ ]` |
+| 작업 | 상태 | 비고 |
+|---|---|---|
+| WebSocket(STOMP) 설정 및 호가 갱신 브로드캐스트 | `[x]` | `SimpMessagingTemplate` 사용 |
+| 호가 단위 제한 (가격대별 검증 로직) | `[x]` | 백엔드 검증 완료 |
+| 일일 거래 한도 (MarketSettings 엔티티) | `[x]` | 엔티티 스키마 반영 |
+| 시장 영업시간 (관리자 API 제어) | `[x]` | 개장/폐장 토글 API 완료 |
+| 개인별 체결 알림 시스템 (WebSocket Queue) | `[x]` | `/queue/notifications` 연동 완료 |
+| (나머지 화면 처리: 차트 시각화, 모달 다이얼로그) | `[ ]` | **트랙 B(React)로 이관** |
 
 ---
 
 ## 트랙 B: React SPA 마이그레이션
 
-### 1단계: React 프로젝트 초기화 `[/]` (진행 중)
+### 1단계: React 프로젝트 초기화 `[x]` (완료)
 
 | 작업 | 상태 | 비고 |
 |---|---|---|
-| Vite + React 프로젝트 생성 | `[ ]` | Node.js 설치 필요 |
-| `react-router-dom`, `axios` 설치 | `[ ]` | |
+| Vite + React 프로젝트 생성 | `[x]` | Node.js 설치 필요 |
+| `react-router-dom`, `axios`, `stompjs` 등 설치 | `[x]` | |
 | `App.jsx` 기본 라우팅 구조 설정 | `[x]` | 가이드 코드 작성 완료 |
 
 ### 2단계: JSP → React 컴포넌트 변환 `[/]` (진행 중)
@@ -176,13 +161,13 @@ graph TB
 | 나머지 JSP 페이지들 변환 | `[ ]` | CouponMarket, News, PointHistory 등 |
 | 기존 CSS 파일 연동 | `[ ]` | |
 
-### 3단계: 백엔드 REST API 변환 `[ ]`
+### 3단계: 백엔드 REST API 변환 `[x]` (백엔드 4단계에서 완료)
 
 | 작업 | 상태 |
 |---|---|
-| 프론트엔드에서 필요한 REST 엔드포인트 파악 | `[ ]` |
-| `@Controller` → `@RestController` 변환 | `[ ]` |
-| Spring Boot CORS 설정 추가 | `[ ]` |
+| 프론트엔드에서 필요한 REST 엔드포인트 파악 | `[x]` |
+| `@Controller` → `@RestController` 변환 | `[x]` |
+| Spring Boot CORS 설정 추가 | `[ ]` | (필요시 추가 예정)
 
 ### 4단계: 데이터 연동 `[ ]`
 

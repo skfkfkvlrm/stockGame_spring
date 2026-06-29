@@ -2,14 +2,19 @@ package com.skfkfkvlrm.stockgame_spring.service.impl;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.request.StockOrderRequest;
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockOrderResponse;
+import com.skfkfkvlrm.stockgame_spring.domain.MarketSettings;
 import com.skfkfkvlrm.stockgame_spring.domain.Order;
 import com.skfkfkvlrm.stockgame_spring.domain.OrderStatus;
+import com.skfkfkvlrm.stockgame_spring.repository.MarketSettingsRepository;
 import com.skfkfkvlrm.stockgame_spring.repository.StockDetailRepository;
+import com.skfkfkvlrm.stockgame_spring.repository.StockPriceHistoryRepository;
 import com.skfkfkvlrm.stockgame_spring.service.StockOrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +22,46 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class StockOrderServiceImpl implements StockOrderService {
     private final StockDetailRepository stockDetailRepository;
+    private final StockPriceHistoryRepository stockPriceHistoryRepository;
+    private final MarketSettingsRepository marketSettingsRepository;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    private void validateMarketOpen() {
+        MarketSettings settings = marketSettingsRepository.findById(1).orElse(null);
+        if (settings != null && !settings.isMarketOpen()) {
+            throw new IllegalStateException("현재 주식 시장이 폐장되었습니다.");
+        }
+    }
+
+    private void validateTickSize(int price) {
+        int tickSize = getTickSize(price);
+        if (price % tickSize != 0) {
+            throw new IllegalArgumentException("올바르지 않은 호가 단위입니다. 현재 가격대의 호가 단위는 " + tickSize + "원 입니다.");
+        }
+    }
+
+    private int getTickSize(int price) {
+        if (price < 1000) return 1;
+        if (price < 5000) return 5;
+        if (price < 10000) return 10;
+        if (price < 50000) return 50;
+        return 100;
+    }
+
+    private void broadcastOrderUpdate(int stockId) {
+        messagingTemplate.convertAndSend("/topic/orders/" + stockId, "ORDER_UPDATED");
+    }
+
+    private void notifyStudent(String studentId, String message) {
+        messagingTemplate.convertAndSendToUser(studentId, "/queue/notifications", message);
+    }
 
     @Override
     @Transactional
     public String buyStock(StockOrderRequest request) {
+        validateMarketOpen();
+        validateTickSize(request.getPrice());
+
         int totalOrderPrice = request.getPrice() * request.getAmount();
         // 1. 보유 포인트 확인
         int currentPoints = stockDetailRepository.getStudentPoint(request.getStudentId());
@@ -46,6 +87,11 @@ public class StockOrderServiceImpl implements StockOrderService {
             stockDetailRepository.setStockPubBalance(request.getAmount(), request.getStockId());
             stockDetailRepository.setStudentPointDown(totalOrderPrice, request.getStudentId());
 
+            stockPriceHistoryRepository.upsertDailyPrice(request.getStockId(), LocalDate.now(), request.getPrice(), request.getAmount());
+
+            broadcastOrderUpdate(request.getStockId());
+            notifyStudent(request.getStudentId(), request.getStockId() + " 종목 매수가 체결되었습니다.");
+
             return "매수 주문이 체결되었습니다.";
         }
         // b. 학생 간 거래 (부분 체결 로직)
@@ -65,7 +111,7 @@ public class StockOrderServiceImpl implements StockOrderService {
                 stockDetailRepository.setOrderStateMatched(sellOrder.getOrderId());
                 sellOrderId = sellOrder.getOrderId();
             } else {
-                stockDetailRepository.updateOrderAmount(matchAmount, sellOrder.getOrderId());
+                stockDetailRepository.updateOrderAmount(sellOrder.getAmount() - matchAmount, sellOrder.getOrderId());
                 Order sellFilled = Order.builder()
                         .content(OrderStatus.매도).state(OrderStatus.체결)
                         .price(matchPrice).amount(matchAmount)
@@ -87,6 +133,8 @@ public class StockOrderServiceImpl implements StockOrderService {
             stockDetailRepository.setStudentPointDown(matchTotalPrice, request.getStudentId());
             stockDetailRepository.setStudentPointUp(matchTotalPrice, sellOrder.getStudentId());
 
+            stockPriceHistoryRepository.upsertDailyPrice(request.getStockId(), LocalDate.now(), matchPrice, matchAmount);
+
             remainingAmount -= matchAmount;
             if (remainingAmount == 0) {
                 break;
@@ -102,6 +150,7 @@ public class StockOrderServiceImpl implements StockOrderService {
             stockDetailRepository.insertOrder(order);
             stockDetailRepository.setStudentPointDown(request.getPrice() * remainingAmount, request.getStudentId());
             
+            broadcastOrderUpdate(request.getStockId());
             if (remainingAmount < request.getAmount()) {
                 return "부분 체결 완료 및 남은 수량 매수 대기 등록되었습니다.";
             } else {
@@ -109,12 +158,17 @@ public class StockOrderServiceImpl implements StockOrderService {
             }
         }
         
+        broadcastOrderUpdate(request.getStockId());
+        notifyStudent(request.getStudentId(), request.getStockId() + " 종목 매수가 전량 체결되었습니다.");
         return "매수 주문이 전량 체결되었습니다.";
     }
 
     @Override
     @Transactional
     public String sellStock(StockOrderRequest request) {
+        validateMarketOpen();
+        validateTickSize(request.getPrice());
+
         Map<String, Object> pubInfo = stockDetailRepository.getStockPubInfo(request.getStockId());
         int pubAmount = getIntOrDefault(pubInfo, "publication_balance");
         if (pubAmount > 0) {
@@ -143,7 +197,7 @@ public class StockOrderServiceImpl implements StockOrderService {
                 stockDetailRepository.setOrderStateMatched(buyOrder.getOrderId());
                 buyOrderId = buyOrder.getOrderId();
             } else {
-                stockDetailRepository.updateOrderAmount(matchAmount, buyOrder.getOrderId());
+                stockDetailRepository.updateOrderAmount(buyOrder.getAmount() - matchAmount, buyOrder.getOrderId());
                 Order buyFilled = Order.builder()
                         .content(OrderStatus.매수).state(OrderStatus.체결)
                         .price(matchPrice).amount(matchAmount)
@@ -163,7 +217,8 @@ public class StockOrderServiceImpl implements StockOrderService {
             // 거래내역 및 포인트 정산
             stockDetailRepository.setMatchedOrder(buyOrderId, sellOrderId);
             stockDetailRepository.setStudentPointUp(matchTotalPrice, request.getStudentId());
-            // 매수자는 이미 매수 대기 시점에 포인트를 차감당했으므로 체결 시점에 차감할 필요 없음.
+
+            stockPriceHistoryRepository.upsertDailyPrice(request.getStockId(), LocalDate.now(), matchPrice, matchAmount);
 
             remainingAmount -= matchAmount;
             if (remainingAmount == 0) {
@@ -179,6 +234,7 @@ public class StockOrderServiceImpl implements StockOrderService {
                     .studentId(request.getStudentId()).stockId(request.getStockId()).build();
             stockDetailRepository.insertOrder(order);
             
+            broadcastOrderUpdate(request.getStockId());
             if (remainingAmount < request.getAmount()) {
                 return "부분 체결 완료 및 남은 수량 매도 대기 등록되었습니다.";
             } else {
@@ -186,6 +242,8 @@ public class StockOrderServiceImpl implements StockOrderService {
             }
         }
 
+        broadcastOrderUpdate(request.getStockId());
+        notifyStudent(request.getStudentId(), request.getStockId() + " 종목 매도가 전량 체결되었습니다.");
         return "매도 주문이 전량 체결되었습니다.";
     }
 
@@ -234,6 +292,7 @@ public class StockOrderServiceImpl implements StockOrderService {
         }
         // 5. 주문 상태를 '취소'로 업데이트
         stockDetailRepository.setOrderStateCancel(orderId);
+        broadcastOrderUpdate(order.getStockId());
         // 6. 주식 번호 리턴
         return order.getOrderId();
     }

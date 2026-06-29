@@ -124,4 +124,10 @@
 		SET amount = amount - #{amount}
 		WHERE order_id = #{orderId}
 	</update>
+	<select id="getOrderById" resultType="com.skfkfkvlrm.stockgame_spring.controller.dto.response.StockOrderResponse">
+		SELECT o.order_id, o.content, o.price, o.amount, o.state, s.student_id, o.stock_id
+		FROM orders o
+		JOIN students s ON o.student_id = s.id
+		WHERE o.order_id = #{orderId}
+	</select>
 </mapper>
