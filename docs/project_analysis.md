@@ -1,7 +1,309 @@
-# 📊 프로젝트 종합 분석 보고서
+# 📊 SchoolStock 프로젝트 종합 분석서
 
-> 분석 일시: 2026-06-29  
-> 대상: `stockGame_spring` (백엔드) + `stockGame_react` (프론트엔드)
+> 최종 작성일: 2026-06-29  
+> 분석 대상: `stockGame_spring` (백엔드) / `stockGame_react` (프론트엔드)
+
+---
+
+## 1. 프로젝트 개요
+
+학생 대상 **주식 모의투자 시뮬레이션** 서비스. 교사(관리자)는 시장을 운영하고, 학생은 가상 포인트로 주식을 매수/매도한다.
+
+| 항목 | 상세 |
+|---|---|
+| 프로젝트명 | SchoolStock |
+| 서비스 대상 | 학생(플레이어) / 교사(관리자) |
+| 구조 | 백엔드(Spring Boot) + 프론트엔드(React) 분리형 SPA |
+| 개발 상태 | 백엔드 로드맵 완료, 프론트엔드 마이그레이션 완료 / 일부 API 연동 버그 잔존 |
+
+---
+
+## 2. 기술 스택
+
+### 백엔드 (`stockGame_spring`)
+| 분류 | 기술 |
+|---|---|
+| Language | Java 21 |
+| Framework | Spring Boot 3.5.x |
+| DB | MariaDB |
+| ORM | Spring Data JPA + MyBatis (혼용) |
+| 보안 | Spring Security (이중 필터 체인, BCrypt) |
+| 실시간 통신 | WebSocket (STOMP, SockJS) |
+| 빌드 | Maven |
+| 포트 | 8882 |
+
+### 프론트엔드 (`stockGame_react`)
+| 분류 | 기술 |
+|---|---|
+| Language | JavaScript (ES6+) |
+| Framework | React 19 + Vite 8 |
+| 라우팅 | React Router DOM v7 |
+| HTTP | Axios (인터셉터, credentials 설정) |
+| 스타일링 | Vanilla CSS (글래스모피즘 다크 테마) |
+| 차트 | ApexCharts (`react-apexcharts`) |
+| 실시간 통신 | `@stomp/stompjs` + `sockjs-client` |
+| 포트 | 5173 (Vite 개발 서버) |
+
+---
+
+## 3. 아키텍처 구조
+
+```
+[브라우저]
+    │ 5173
+    ▼
+[Vite Dev Server] ──proxy(/api, /ws)──► [Spring Boot 8882]
+                                              │
+                                         ┌───┴───┐
+                               [Spring Security]  [MyBatis / JPA]
+                                    │                   │
+                              ┌─────┴─────┐          [MariaDB]
+                       [관리자(Admin)  학생(Student)]
+                        폼 로그인         세션 인증
+```
+
+### 보안 구조 (이중 필터 체인)
+- **Chain 1 (Order 1)**: `/admin/**` → AppUser(교사) → Form Login / JPA 인증 / CSRF 활성화
+- **Chain 2 (Order 2)**: 그 외 모든 경로 → Student → Session 기반 인증 / CSRF 비활성화
+
+### 데이터 접근 전략
+| MyBatis (복잡한 조인/쿼리) | JPA (단순 저장/조회) |
+|---|---|
+| memberMapper.xml | AppUserRepository |
+| myAssetMapper.xml | MarketSettingsRepository |
+| stockDetailMapper.xml | NewsRepository |
+| myPointHistoryMapper.xml | CouponRepository |
+| couponMapper.xml | StockPriceHistoryRepository |
+| stockPriceHistoryMapper.xml | |
+
+---
+
+## 4. 패키지 구조
+
+### 백엔드 (`stockGame_spring`)
+```
+src/main/java/com/skfkfkvlrm/stockgame_spring/
+ ├── config/      # Security, WebSocket, DataInitializer 등 설정
+ ├── controller/  # REST API 엔드포인트 (9개 컨트롤러)
+ │   └── dto/     # request / response DTO
+ ├── domain/      # JPA 엔티티 및 Enum (14개)
+ ├── exception/   # 커스텀 비즈니스 예외 + GlobalExceptionHandler
+ ├── repository/  # Spring Data JPA + MyBatis Mapper 인터페이스
+ ├── service/     # 비즈니스 로직 인터페이스 + impl/
+ └── resources/mappers/  # MyBatis XML 쿼리 (8개)
+```
+
+### 프론트엔드 (`stockGame_react`)
+```
+src/
+├── App.jsx / main.jsx        # 앱 진입점 + BrowserRouter
+├── api/axiosConfig.js        # Axios 인스턴스 + 401 인터셉터
+├── components/layout/
+│   ├── MainLayout.jsx        # 공통 레이아웃 (Sidebar + Outlet)
+│   └── Sidebar.jsx           # 메뉴 내비게이션 + 유저 포인트 표시
+└── pages/
+    ├── auth/                 # Login.jsx, Register.jsx
+    ├── dashboard/            # Dashboard.jsx
+    ├── stock/                # StockList.jsx, StockDetail.jsx
+    ├── news/                 # NewsList.jsx
+    ├── points/               # PointsHistory.jsx
+    └── coupons/              # CouponStore.jsx, MyCoupons.jsx
+```
+
+---
+
+## 5. API 명세
+
+### 인증 & 회원 (`/api/members`, `/api/auth`)
+| Method | Endpoint | 설명 |
+|---|---|---|
+| POST | `/api/members/login` | 학생 로그인 (세션 발급) |
+| POST | `/api/members/join` | 학생 회원가입 |
+| GET | `/api/members/me` | 현재 로그인 학생 정보 조회 |
+| GET | `/api/members/id-check` | 아이디 중복 확인 |
+| GET | `/api/auth/status` | 현재 인증 상태 조회 (학생/관리자/비로그인) |
+
+### 주식 (`/api/stock`)
+| Method | Endpoint | 설명 |
+|---|---|---|
+| GET | `/api/stock` | 전체 주식 목록 (현재가 `nowPrice`, 이전가, 등락률) |
+| GET | `/api/stock/{stockId}` | 특정 주식 상세 정보 |
+| GET | `/api/stock/{stockId}/history` | OHLCV 차트 데이터 |
+| GET | `/api/stock/{stockId}/orders` | 호가창 (대기 주문 목록) |
+
+### 주문 (`/api/orders`)
+| Method | Endpoint | 설명 |
+|---|---|---|
+| POST | `/api/orders/buy` | 매수 주문 접수 (부분 체결 엔진) |
+| POST | `/api/orders/sell` | 매도 주문 접수 (부분 체결 엔진) |
+| POST | `/api/orders/cancel` | 대기 주문 취소 + 포인트 환불 |
+
+### 자산 & 포인트 (`/api/asset`, `/api/history`)
+| Method | Endpoint | 설명 |
+|---|---|---|
+| GET | `/api/asset` | 내 자산 현황 (총 자산, 포인트, 손익, 쿠폰 수) |
+| GET | `/api/history` | 포인트 내역 (매수/매도/쿠폰구매/지급 통합 UNION 쿼리) |
+
+### 쿠폰 (`/api/coupons`)
+| Method | Endpoint | 설명 |
+|---|---|---|
+| GET | `/api/coupons` | 전체 쿠폰 목록 조회 |
+| POST | `/api/coupons/{couponId}/buy` | 쿠폰 구매 |
+| GET | `/api/coupons/my` | 내 보유 쿠폰 목록 조회 |
+
+### 관리자 (`/api/admin`, `/admin/**`)
+| Method | Endpoint | 설명 |
+|---|---|---|
+| GET | `/api/admin/market/status` | 시장 개/폐장 상태 조회 |
+| POST | `/api/admin/market/toggle` | 시장 개/폐장 토글 |
+
+---
+
+## 6. 백엔드 개발 이력 (0~7단계)
+
+| 단계 | 핵심 내용 | 상태 |
+|---|---|---|
+| **0단계** | 주문 취소 환불 버그(`Enum 비교 오류`) 수정, 세션 검증 취약점 패치 | ✅ 완료 |
+| **1단계** | 이중 필터 체인(관리자/학생 분리), Spring Security + JPA `AppUser` 도입 | ✅ 완료 |
+| **2단계** | Split 전략 기반 부분 체결(Partial Fill) 매칭 엔진 전면 리팩터링 | ✅ 완료 |
+| **3단계** | BCrypt 해싱 도입, 평문 → 해시 무중단 마이그레이션 로직 | ✅ 완료 |
+| **4단계** | `@RestController` 전환, `ApiResponse<T>` 통합 포맷, `GlobalExceptionHandler` | ✅ 완료 |
+| **5단계** | OHLCV 일봉 기록(`stock_price_history`), 자정 `@Scheduled` 기준가 갱신 | ✅ 완료 |
+| **6단계** | WebSocket STOMP 브로드캐스트(`/topic/orders`), 호가 단위(Tick Size), 시장 개폐장 정책 | ✅ 완료 |
+| **7단계 (클린업)** | `ddl-auto: create → update`, `Transaction` 무결성 복구(amount/price), IPO 로직 버그 수정 | ✅ 완료 |
+
+---
+
+## 7. 프론트엔드 개발 이력
+
+### 화면 구성 (완료)
+| 경로 | 컴포넌트 | 기능 |
+|---|---|---|
+| `/login` | `Login.jsx` | 학생 로그인 |
+| `/register` | `Register.jsx` | 회원가입 (아이디 중복 체크) |
+| `/` | `Dashboard.jsx` | 내 자산 현황 (총 자산, 포인트, 손익, 보유 쿠폰) |
+| `/stocks` | `StockList.jsx` | 전체 주식 목록 + 클릭 시 상세 페이지 이동 |
+| `/stocks/:id` | `StockDetail.jsx` | 개별 주식 (캔들스틱 차트, 매수/매도 폼, WebSocket 연동) |
+| `/news` | `NewsList.jsx` | 시장 뉴스 목록 |
+| `/history` | `PointsHistory.jsx` | 포인트 변동 내역 |
+| `/coupons` | `CouponStore.jsx` | 쿠폰 상점 |
+| `/my-coupons` | `MyCoupons.jsx` | 내 보유 쿠폰 목록 (신규 추가) |
+
+### 버그 픽스 이력
+| 분류 | 내용 |
+|---|---|
+| **프론트** | `StockDetail.jsx` WebSocket `deactivate()` 미호출 → 좀비 커넥션(메모리 누수) 해결 |
+| **프론트** | `vite.config.js` 프록시 설정 도입 → 하드코딩 제거, CORS 원천 차단 |
+| **프론트** | `StockList.jsx` 행 클릭 이벤트 누락 → `useNavigate` 연결 완료 |
+| **프론트** | `StockDetail.jsx` 필드명 불일치 → `currentPrice` → `nowPrice` 수정 |
+| **프론트** | `PointsHistory.jsx` 데이터 없을 때 화이트 스크린 → null/옵셔널 체이닝 처리 |
+| **프론트** | `CouponStore.jsx` 쿠폰 Key 오류 → `coupon.id` → `coupon.couponId` 수정 |
+| **백엔드** | `Transaction` 엔티티 테이블명 불일치(`transactions` → `stock_transactions`) → 전체 Mapper 수정 |
+| **백엔드** | `DataInitializer` 서버 재기동 시 더미 데이터 중복 삽입 → `COUNT` 체크 + `DELETE` 청소 추가 |
+| **백엔드** | `students` 테이블 중복 레코드로 인한 서브쿼리 `"Expected one, found N"` 500 에러 해결 |
+| **백엔드** | `CouponPurchase` 엔티티 `studentId`, `couponId` 필드 누락 → 추가 |
+| **백엔드** | `couponMapper.xml` `getMyCouponList` 쿼리 `cp.student_id` 컬럼 인식 오류 → 수정 |
+
+---
+
+## 8. DB 스키마 요약
+
+| 테이블 | 설명 |
+|---|---|
+| `students` | 학생 계정 (student_id, password, total_point, total_coupon) |
+| `app_users` | 관리자(교사) 계정 (Spring Security용) |
+| `stocks` | 주식 종목 (name, now_price, prev_price, publication_price, publication_balance) |
+| `orders` | 주문 (content: 매수/매도, state: 대기/체결/취소, price, amount, student_id, stock_id) |
+| `stock_transactions` | 체결 기록 (buy_order_id, sell_order_id, amount, price) |
+| `stock_price_history` | OHLCV 일봉 기록 (stock_id, date, open/high/low/close, volume) |
+| `coupons` | 쿠폰 마스터 (name, price) |
+| `coupon_purchase` | 쿠폰 구매 내역 (student_id, coupon_id, price, name, state) |
+| `get_points` | 포인트 지급 내역 (student_id, point, content) |
+| `news` | 뉴스 목록 |
+| `market_settings` | 시장 개/폐장 상태 (is_market_open) |
+
+---
+
+## 9. 현재 상태 및 잔여 이슈
+
+### ✅ 정상 작동 확인 항목
+- 로그인 / 로그아웃
+- 대시보드 자산 현황 조회 (총 자산, 포인트, 손익, 쿠폰)
+- 주식 목록 조회 및 상세 페이지 클릭 진입
+- 주식 상세 페이지 현재가(`nowPrice`) 표시 및 캔들스틱 차트
+- 뉴스 목록
+- 포인트 내역 (`/api/history`)
+- 내 보유 쿠폰 조회 (`/api/coupons/my`)
+- 쿠폰 상점 목록 조회
+
+### ⚠️ 잔여 미해결 이슈
+
+| 우선순위 | 분류 | 내용 |
+|---|---|---|
+| 🔴 높음 | 백엔드 | 주식 **매수 주문 실행** (`POST /api/orders/buy`) 처리 중 500 에러 (트랜잭션 로직 점검 필요) |
+| 🔴 높음 | 백엔드 | **쿠폰 구매** (`POST /api/coupons/{id}/buy`) 처리 중 실패 (`CouponServiceImpl` 검증 필요) |
+| 🟡 중간 | 프론트 | 주문/구매 실패 시 사용자 에러 메시지 UX 개선 필요 |
+| 🟡 중간 | 백엔드 | 호가창 UI (`/api/stock/{id}/orders`) 프론트 미연동 (백엔드 API는 존재) |
+| 🟢 낮음 | 백엔드 | 관리자 대시보드 미구현 (사용자 관리, 주식/쿠폰 관리 Admin UI) |
+
+---
+
+## 10. 전체 연동 흐름 요약
+
+```mermaid
+sequenceDiagram
+    actor 학생
+    participant React as React (5173)
+    participant Spring as Spring Boot (8882)
+    participant DB as MariaDB
+
+    학생->>React: 로그인 폼 제출
+    React->>Spring: POST /api/members/login
+    Spring->>DB: SELECT FROM students
+    DB-->>Spring: 학생 정보
+    Spring-->>React: { success: true } + JSESSIONID Cookie
+
+    학생->>React: 주식 목록 클릭
+    React->>Spring: GET /api/stock (with Cookie)
+    Spring-->>React: 주식 목록 JSON (nowPrice, prevPrice ...)
+
+    학생->>React: 종목 클릭 → 매수 주문 제출
+    React->>Spring: POST /api/orders/buy (with Cookie)
+    Spring->>DB: 포인트 검증 + 주문 매칭 + 포인트 이동
+    Spring-->>React: { success: true, data: "매수 체결..." }
+    Spring->>React: WebSocket /topic/orders/{id} → ORDER_UPDATED
+    React->>Spring: GET /api/stock/{id} (화면 자동 갱신)
+```
+
+---
+
+## 11. 로컬 개발 환경 실행 방법
+
+```bash
+# 1. 백엔드 실행 (포트 8882)
+cd stockGame_spring
+./mvnw.cmd spring-boot:run
+
+# 2. 프론트엔드 실행 (포트 5173)
+cd stockGame_react
+npm run dev
+
+# 3. 브라우저 접속
+http://localhost:5173
+
+# 테스트 계정 (DataInitializer 자동 생성)
+# 학생: abc / abc123!
+# 관리자: admin / admin1234
+```
+
+---
+
+## 12. GitHub 저장소
+
+| 프로젝트 | URL |
+|---|---|
+| 백엔드 | https://github.com/skfkfkvlrm/stockGame_spring |
+| 프론트엔드 | https://github.com/skfkfkvlrm/stockGame_react |
 
 ---
 
