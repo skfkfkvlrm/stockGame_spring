@@ -466,3 +466,17 @@ quadrantChart
 - **위치**: [StockOrderController L23-24](file:///C:/Users/KOSTA/.gemini/antigravity/worktrees/stockGame_spring/add-project-summarization-feature/src/main/java/com/skfkfkvlrm/stockgame_spring/controller/StockOrderController.java#L23-L24)
 - **원인**: `session.setAttribute("studentId", ...)` 직후 `session.getAttribute("studentId") == null` 체크 → 항상 non-null
 - **영향**: 로그인 검증이 사실상 작동하지 않음
+
+---
+
+## 🚀 별도 트랙: 프론트엔드 React 마이그레이션 (✅ 완료)
+
+> [!TIP]
+> 6단계의 UX 개선의 일환으로 기존 JSP 기반의 모놀리식 프론트엔드를 **Vite + React 기반의 SPA**로 분리하는 마이그레이션이 완료되었습니다.
+
+### 주요 완료 사항
+1. **React 라우팅 및 뷰 컴포넌트 이관**: 로그인, 회원가입, 대시보드, 주식 목록/상세, 내역, 뉴스, 쿠폰 상점 전체 이관 완료 (`stockGame_react` 프로젝트).
+2. **REST API 연동**: Axios 기반으로 쿠키/세션을 연동하여 Spring Boot의 컨트롤러들과 통신 연결 성공.
+3. **CORS 및 Proxy 설정**: 백엔드(`WebConfig.java`)와 프론트엔드(`vite.config.js`) 모두 CORS 설정을 적용하여 API 연동.
+4. **차트 시각화**: `react-apexcharts`를 적용하여 종목 상세 화면에 시각적 차트 제공 (6단계 목표 일부 달성).
+5. **더미 데이터 및 DB 초기화**: `DataInitializer`를 통해 깨끗한 환경에서 초기 시드 데이터(뉴스, 상점 쿠폰 등) 제공 완료.

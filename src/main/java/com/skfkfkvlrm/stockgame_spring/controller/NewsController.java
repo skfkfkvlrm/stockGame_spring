@@ -1,22 +1,33 @@
 package com.skfkfkvlrm.stockgame_spring.controller;
 
 import com.skfkfkvlrm.stockgame_spring.controller.dto.response.ApiResponse;
+import com.skfkfkvlrm.stockgame_spring.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/news")
 @RequiredArgsConstructor
 public class NewsController {
 
-    @GetMapping("/")
-    public ApiResponse<String> getNews(@SessionAttribute(name = "studentId", required = false) String studentId) {
+    private final NewsRepository newsRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
+    @GetMapping
+    public ApiResponse<List<String>> getNews(@SessionAttribute(name = "studentId", required = false) String studentId) {
         if (studentId == null) {
             return ApiResponse.error("로그인이 필요합니다.");
         }
-        return ApiResponse.success("News data", "TODO: 뉴스 목록 데이터");
+        List<String> newsList = newsRepository.getNewsList();
+        return ApiResponse.success("News data", newsList);
+    }
+    @GetMapping("/db-check")
+    public List<java.util.Map<String, Object>> dbCheck() {
+        return jdbcTemplate.queryForList("DESCRIBE coupons");
     }
 }

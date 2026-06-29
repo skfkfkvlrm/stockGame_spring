@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "coupons")
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

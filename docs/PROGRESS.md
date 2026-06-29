@@ -20,3 +20,30 @@
 ### 📌 향후 계획
 - 백엔드 자체적인 메인 로드맵은 모두 종료되었습니다.
 - 향후 프론트엔드(`stockGame_react`) 개발이 진행됨에 따라 추가적으로 필요한 데이터 필드나 API 수정 요청이 발생할 경우 대응하는 유지보수 형태로 진행될 예정입니다.
+
+---
+
+## 프론트엔드 React 마이그레이션 트랙 (별도 트랙) ✅ 완료
+
+`stockGame_react` 프로젝트 (`feature/react-migration` 브랜치)를 통해 기존 JSP 화면을 React SPA로 100% 이관 완료.
+
+### ✅ 완료된 작업
+1. **공통 레이아웃** — `MainLayout`, `Sidebar` (유저 정보, 포인트, 메뉴 내비게이션)
+2. **인증** — `Login.jsx`, `Register.jsx` (아이디 중복체크 포함)
+3. **대시보드** — `Dashboard.jsx` (`/api/asset` 연동, 내 자산 현황)
+4. **주식** — `StockList.jsx`, `StockDetail.jsx` (ApexCharts 캔들스틱 차트, 매수/매도 폼, WebSocket 실시간 연동)
+5. **뉴스** — `NewsList.jsx` (`/api/news` 연동, 문자열 목록 렌더링 수정)
+6. **포인트 내역** — `PointsHistory.jsx` (`/api/history` 연동)
+7. **쿠폰 상점** — `CouponStore.jsx` (`/api/coupons` 연동 및 렌더링 안정화)
+8. **더미 데이터** — `DataInitializer`로 초기 시드 데이터 (학생, 주식, 뉴스, 쿠폰) 자동 삽입
+
+### 🔗 관련 리포지토리
+- 백엔드: [stockGame_spring](https://github.com/skfkfkvlrm/stockGame_spring) — `feature/react-migration` 브랜치
+- 프론트엔드: [stockGame_react](https://github.com/skfkfkvlrm/stockGame_react) — `feature/react-migration` 브랜치
+
+### 📋 알려진 이슈 (미완료)
+- `Transaction` 엔티티에 `amount`, `price` 필드 누락 → 부분체결 기록 불완전
+- `StockDetail.jsx` WebSocket cleanup 누락 → 연결 누수 위험
+- `vite.config.js` Proxy 미설정 → `baseURL` 하드코딩 상태
+- 학생 비밀번호 평문 저장 → BCrypt 적용 필요
+
