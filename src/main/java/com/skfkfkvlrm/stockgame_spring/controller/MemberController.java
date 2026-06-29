@@ -41,4 +41,13 @@ public class MemberController {
         boolean isDuplicate = memberService.getIdCheck(studentId);
         return ApiResponse.success(isDuplicate ? "이미 사용중인 아이디입니다." : "사용 가능한 아이디입니다.", isDuplicate);
     }
+
+    @GetMapping("/me")
+    public ApiResponse<StudentResponse> getMe(HttpSession session) {
+        StudentResponse info = (StudentResponse) session.getAttribute("info");
+        if (info == null) {
+            return ApiResponse.error("로그인이 필요합니다.");
+        }
+        return ApiResponse.success("내 정보 조회 성공", info);
+    }
 }

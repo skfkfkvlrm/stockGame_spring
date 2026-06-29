@@ -60,6 +60,7 @@ public class SecurityConfig {
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/admin/**")       // 이 Chain은 /admin/** 경로에만 적용
+            .cors(org.springframework.security.config.Customizer.withDefaults())
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login").permitAll()                     // 로그인 페이지는 공개
@@ -105,6 +106,7 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain studentFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(org.springframework.security.config.Customizer.withDefaults()) // 전역 CORS 설정 적용
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()   // 학생 인증은 기존 HttpSession/컨트롤러 방식 그대로
             )

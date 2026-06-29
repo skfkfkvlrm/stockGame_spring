@@ -12,4 +12,6 @@ public interface StockDetailService {
     List<Order> getLiveOrderList(int stockId, String type);
     // 내 요청 주문 목록 조회
     List<Order> getwaitingOrderList(int stockId, String studentId);
+    // 전체 주식 목록 상세 조회
+    List<StockDetailResponse> getAllStocks();
 }

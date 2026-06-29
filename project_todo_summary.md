@@ -148,66 +148,51 @@ graph TB
 | `react-router-dom`, `axios`, `stompjs` 등 설치 | `[x]` | |
 | `App.jsx` 기본 라우팅 구조 설정 | `[x]` | 가이드 코드 작성 완료 |
 
-### 2단계: JSP → React 컴포넌트 변환 `[/]` (진행 중)
+### 2단계: JSP → React 컴포넌트 변환 `[x]` (완료)
 
 | 작업 | 상태 | 비고 |
 |---|---|---|
-| `SideBar.jsp` → `<Sidebar />` | `[x]` | 가이드 코드 완료 |
-| `StockList.jsp` → `<StockList />` | `[x]` | 가이드 코드 완료 |
-| `Login.jsp` → `<Login />` | `[x]` | 가이드 코드 완료 |
-| `StockDetail.jsp` → `<StockDetail />` | `[ ]` | |
-| `AddMember.jsp` → `<AddMember />` | `[ ]` | |
-| `MyAssets.jsp` → `<MyAssets />` | `[ ]` | |
-| 나머지 JSP 페이지들 변환 | `[ ]` | CouponMarket, News, PointHistory 등 |
-| 기존 CSS 파일 연동 | `[ ]` | |
+| `SideBar.jsp` (공통 레이아웃) | `[x]` | `MainLayout`, `Sidebar`로 분리 |
+| `Login.jsp` | `[x]` | `pages/auth/Login.jsx` 변환 완료 |
+| `MyAssets.jsp` (대시보드) | `[x]` | `pages/dashboard/Dashboard.jsx` 변환 완료 |
+| `StockList.jsp` | `[x]` | `pages/stock/StockList.jsx` 변환 완료 |
+| `StockDetail.jsp` | `[x]` | 차트 및 호가창 컴포넌트 변환 완료 (`StockDetail.jsx`) |
+| 그 외 페이지 (뉴스, 쿠폰, 내역 등) | `[x]` | `NewsList.jsx`, `CouponStore.jsx`, `PointsHistory.jsx`, `Register.jsx` 변환 완료 |
 
-### 3단계: 백엔드 REST API 변환 `[x]` (백엔드 4단계에서 완료)
+### 3단계: 백엔드 REST API 변환 `[x]` (완료)
 
 | 작업 | 상태 |
 |---|---|
 | 프론트엔드에서 필요한 REST 엔드포인트 파악 | `[x]` |
 | `@Controller` → `@RestController` 변환 | `[x]` |
-| Spring Boot CORS 설정 추가 | `[ ]` | (필요시 추가 예정)
+| Spring Boot CORS 전역 설정 추가 (`WebConfig.java`, `SecurityConfig.java`) | `[x]` |
+| 누락된 API(`GET /api/stocks`, `GET /api/members/me`) 추가 | `[x]` |
 
-### 4단계: 데이터 연동 `[ ]`
+### 4단계: 프론트엔드 데이터 연동 `[x]` (완료)
 
 | 작업 | 상태 |
 |---|---|
-| `useEffect` + `axios`로 API Fetch 로직 구현 | `[ ]` |
-| 받아온 데이터를 React State에 바인딩 | `[ ]` |
+| `axiosConfig.js` 인터셉터(401 예외 처리 등) 및 공통 설정 구현 | `[x]` |
+| `Login.jsx` 폼 로그인 API 연동 및 성공 시 이동 | `[x]` |
+| `Sidebar.jsx` 내 정보(/me) 조회 연동 | `[x]` |
+| `Dashboard.jsx` 내 자산/보유 주식(/api/asset) 조회 연동 | `[x]` |
+| `StockList.jsx` 전체 종목 데이터 및 실시간 등락률 프론트 단 계산 로직 | `[x]` |
 
 ---
 
-## 미결정 사항 (결정 필요)
-
-React 마이그레이션을 본격 진행하기 전에 결정이 필요한 항목들:
-
-| # | 질문 | 선택지 |
-|---|---|---|
-| 1 | **React 프로젝트 도구** | Vite (권장) vs Create React App |
-| 2 | **상태 관리** | React Hooks + Context API vs Redux vs Zustand |
-| 3 | **스타일링** | 기존 CSS 유지 vs CSS Modules vs Styled Components vs Tailwind |
-| 4 | **작업 진행 순서** | 백엔드 개선 먼저? React 마이그레이션 먼저? 병렬 진행? |
-
----
-
-## 추천 진행 순서
+## 🚀 현재 진행 및 다음 목표 (Track B 집중)
 
 > [!IMPORTANT]
-> 두 트랙을 완전 병렬로 진행하면 REST API 변환 시점에서 충돌이 생깁니다. 아래 순서를 권장합니다.
+> 백엔드 개선(Track A)이 **100% 완료**됨에 따라, 현재 모든 개발 리소스는 **React 마이그레이션(Track B)**에 집중되고 있습니다.
 
 ```
-1. 🔴 즉시 버그 수정 (cancelOrder 환불 + 세션 검증)
-    ↓
-2. 백엔드 3단계까지 (JPA/Security → 부분체결 → 보안)
-    ↓  ← 백엔드 API가 안정화된 시점
-3. React 마이그레이션 시작 (1~2단계: 프로젝트 생성 + 정적 변환)
-    ↓
-4. 백엔드 4단계 (에러 처리 + API 응답 구조화) + React 3단계 (REST 변환) 동시 진행
-    ↓
-5. React 4단계 (데이터 연동)
-    ↓
-6. 백엔드 5~6단계 (거래 고도화 + UX) — React와 함께 점진 개선
-```
+[완료] 1. 즉시 버그 수정 (환불 및 세션)
+[완료] 2. 부분 체결 엔진 도입
+[완료] 3. 백엔드 아키텍처 개편 및 100% REST API 전환
+[완료] 4. 스케줄러(OHLCV) 및 WebSocket 통신 구축
+[완료] 5. React(Vite) 초기 프로젝트 구성 (Track B - 1단계)
+[완료] 6. 핵심 뷰(로그인, 사이드바, 대시보드, 종목 목록) 컴포넌트 이관 및 API 데이터 연동 (Track B - 2, 3, 4단계 완료 및 테스트 통과)
+[완료] 7. 나머지 뷰(주식 상세 정보, 회원가입, 뉴스, 쿠폰 상점, 포인트 내역) 컴포넌트 이관 완료 및 연동 (Track B - 5단계)
+[완료] 8. 프론트엔드 차트 라이브러리(react-apexcharts) 연동 및 웹소켓(STOMP) 실시간 UI 반영 완료
 
-이 순서를 따르면 API 스펙이 확정된 상태에서 프론트엔드를 연결하게 되어 **재작업을 최소화**할 수 있습니다.
+🎉 **모든 기능 구현이 성공적으로 완료되었습니다! React 포팅 및 백엔드 고도화 작업 마무리 단계입니다.**
